@@ -18,4 +18,4 @@ class Product(TimeStampedModel):
 class ProductImage(TimeStampedModel):
     title = models.CharField(max_length=164,blank=True)
     image = models.ImageField(upload_to = 'products/')
-    product = models.ForeignKey(Product,related_name='images')
+    product = models.ForeignKey(Product,related_name='images',on_delete=models.CASCADE)
