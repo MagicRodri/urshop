@@ -8,11 +8,15 @@ from core.models import TimeStampedModel
 class Category(TimeStampedModel):
     name = models.CharField(max_length=128)
     slug = models.SlugField(max_length=128,blank=True,unique=True,null=True)
-    description = models.TextField()
+    description = models.TextField(blank = True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = 'Categories'
+
+    def __str__(self) -> str:
+
+        return self.name
 
 class Brand(TimeStampedModel):
     name = models.CharField(max_length=64)
