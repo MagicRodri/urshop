@@ -21,6 +21,9 @@ class Category(TimeStampedModel):
 class Brand(TimeStampedModel):
     name = models.CharField(max_length=64)
 
+    def __str__(self) -> str:
+        return self.name
+
     
 
 class Product(TimeStampedModel):
@@ -34,8 +37,15 @@ class Product(TimeStampedModel):
     quantity = models.IntegerField(default=1)
     is_active = models.BooleanField(default=True)
     
+    def __str__(self) -> str:
+        return self.name
 
 class Image(TimeStampedModel):
     title = models.CharField(max_length=128,blank=True)
     image = models.ImageField(upload_to = 'products/')
     product = models.ForeignKey(Product,related_name='images',on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        if self.title :
+            return self.title
+        return super().__str__()

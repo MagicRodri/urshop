@@ -7,8 +7,15 @@
     <title>UrSHOP</title>
 </head>
 <body>
-    {% block products %}
+    <header>
+        <nav>
+            <ul>
+                <li><a href={% url 'products:create' %}>Create</a></li>
+            </ul>
+        </nav>
+    </header>
+    {% block content %}
     
-    {% endblock products %}
+    {% endblock content %}
 </body>
 </html>
