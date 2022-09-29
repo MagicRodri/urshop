@@ -1,5 +1,6 @@
 
 from django import forms 
+from django.core.exceptions import ValidationError
 
 from .models import Product,Brand,Category,Image
 
@@ -11,6 +12,27 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = ['name','category','description','price','old_price','quantity']
 
+    
+    # def clean(self):
+    #     data = self.cleaned_data
+
+    #     name = data.get('name')
+    #     description = data.get('description')
+        
+    #     qs = Product.objects.filter(name = name,description = description)
+    #     if qs.exists():
+    #         raise ValidationError('A product with the same name and description already exists')
+
+    #     return data
+
+    def clean_quantity(self):
+        quantity = self.cleaned_data.get('quantity')
+
+        if quantity < 0 :
+            raise ValidationError('Quantity can not be negative')
+        elif not isinstance(quantity,int):
+            raise ValidationError('Quantity must be positive integer')
+
 class CategoryForm(forms.ModelForm):
 
     """
@@ -20,7 +42,7 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['name','description']
-
+        
 
 class BrandForm(forms.ModelForm):
     """
