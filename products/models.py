@@ -19,7 +19,7 @@ class Category(TimeStampedModel):
         return self.name
 
 class Brand(TimeStampedModel):
-    name = models.CharField(max_length=64)
+    brand_name = models.CharField(max_length=128)
 
     def __str__(self) -> str:
         return self.name
@@ -29,7 +29,7 @@ class Brand(TimeStampedModel):
 class Product(TimeStampedModel):
     name = models.CharField(max_length=128)
     slug = models.SlugField(max_length=128,blank=True,unique=True,null=True)
-    brand = models.ForeignKey(Brand,blank=True,null=True,related_name='products',on_delete=models.SET_NULL)
+    brand = models.ForeignKey(Brand,blank=True,null=True,on_delete=models.SET_NULL,related_name = 'products')
     category = models.ManyToManyField(Category)
     description = models.TextField()
     price = models.DecimalField(decimal_places=2,max_digits=15,default=9.99)

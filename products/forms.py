@@ -33,6 +33,8 @@ class ProductForm(forms.ModelForm):
         elif not isinstance(quantity,int):
             raise ValidationError('Quantity must be positive integer')
 
+        return quantity
+
 class CategoryForm(forms.ModelForm):
 
     """
@@ -51,7 +53,7 @@ class BrandForm(forms.ModelForm):
 
     class Meta:
         model = Brand
-        fields = ['name']
+        fields = ['brand_name']
 
 class ImageForm(forms.ModelForm):
     """
