@@ -12,18 +12,7 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = ['name','category','description','price','old_price','quantity']
 
-    
-    # def clean(self):
-    #     data = self.cleaned_data
 
-    #     name = data.get('name')
-    #     description = data.get('description')
-        
-    #     qs = Product.objects.filter(name = name,description = description)
-    #     if qs.exists():
-    #         raise ValidationError('A product with the same name and description already exists')
-
-    #     return data
 
     def clean_quantity(self):
         quantity = self.cleaned_data.get('quantity')
@@ -34,6 +23,19 @@ class ProductForm(forms.ModelForm):
             raise ValidationError('Quantity must be positive integer')
 
         return quantity
+
+        
+    def clean(self):
+        data = self.cleaned_data
+
+        name = data.get('name')
+        description = data.get('description')
+        
+        qs = Product.objects.filter(name = name,description = description)
+        if qs.exists():
+            raise ValidationError('A product with the same name and description already exists')
+
+        return data
 
 class CategoryForm(forms.ModelForm):
 
