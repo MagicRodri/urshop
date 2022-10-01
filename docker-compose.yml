@@ -7,6 +7,7 @@ services:
     volumes:
       - .:/urshop
     ports:
+      # Local:Container
       - 8000:8000
     depends_on:
       - db
@@ -14,6 +15,8 @@ services:
     image: postgres:14.5-bullseye
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5434:5432
     environment:
       - "POSTGRES_HOST_AUTH_METHOD=trust"
 
