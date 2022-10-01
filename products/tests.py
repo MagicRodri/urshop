@@ -1,5 +1,5 @@
 from decimal import Decimal
-from itertools import product
+
 
 from django.test import TestCase,SimpleTestCase
 from django.urls import reverse
@@ -33,10 +33,10 @@ class ProductTests(TestCase):
         category=Category.objects.create(name='test_category',description='test_description')
         category_without_descrtion=Category.objects.create(name='test_category2')
 
-        product = Product.objects.create(name = 'test_product',description = 'test',price = 9.99)
-        product.brand = brand
-        product.category.add(category,category_without_descrtion)
-        product.save()
+        self.product = Product.objects.create(name = 'test_product',description = 'test',price = 9.99)
+        self.product.brand = brand
+        self.product.category.add(category,category_without_descrtion)
+        self.product.save()
 
         self.number = 10
         for i in range(self.number):
@@ -44,17 +44,21 @@ class ProductTests(TestCase):
 
 
     def test_product_creation(self):
-
-        product = Product.objects.get(name='test_product')
         
-        self.assertEqual(product.name,'test_product')
-        self.assertEqual(product.description,'test')
-        self.assertEqual(float(product.price),9.99)
-        self.assertEqual(product.brand.brand_name,'test_brand')
-        self.assertEqual(product.category.count(),2)
-        self.assertTrue(product.is_active)
+        self.assertEqual(self.product.name,'test_product')
+        self.assertEqual(self.product.description,'test')
+        self.assertEqual(float(self.product.price),9.99)
+        self.assertEqual(self.product.brand.brand_name,'test_brand')
+        self.assertEqual(self.product.category.count(),2)
+        self.assertTrue(self.product.is_active)
+
+    def test_product_slug_auto_creation(self):
+
+        self.assertFalse(self.product.slug=='')
+        print(self.product.slug)
 
     def test_product_slug_uniqueness(self):
+
         products = Product.objects.all()
         for product in products:
             query = products.filter(slug = product.slug).exclude(id = product.id)
@@ -62,7 +66,10 @@ class ProductTests(TestCase):
 
 
 class CreatePageTest(TestCase,SimpleTestCase):
+
+
     def setUp(self):
+
         self.response = self.client.get(reverse('products:create'))
 
     def test_product_create_url_name(self):
