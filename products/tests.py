@@ -1,4 +1,5 @@
 from decimal import Decimal
+from itertools import product
 
 from django.test import TestCase,SimpleTestCase
 from django.urls import reverse
@@ -37,6 +38,11 @@ class ProductTests(TestCase):
         product.category.add(category,category_without_descrtion)
         product.save()
 
+        self.number = 10
+        for i in range(self.number):
+            Product.objects.create(name = 'test slug',description = f'test{i}',price = 9.99)
+
+
     def test_product_creation(self):
 
         product = Product.objects.get(name='test_product')
@@ -48,6 +54,12 @@ class ProductTests(TestCase):
         self.assertEqual(product.category.count(),2)
         self.assertTrue(product.is_active)
 
+    def test_product_slug_uniqueness(self):
+        products = Product.objects.all()
+        for product in products:
+            query = products.filter(slug = product.slug).exclude(id = product.id)
+            self.assertFalse(query.exists())
+
 
 class CreatePageTest(TestCase,SimpleTestCase):
     def setUp(self):
@@ -58,4 +70,4 @@ class CreatePageTest(TestCase,SimpleTestCase):
         self.assertEqual(self.response.status_code,200)
 
     def test_product_create_template(self):
-        self.assertTemplateUsed(self.response,'products/create_product.html')
+        self.assertTemplateUsed(self.response,'products/product_create.html')

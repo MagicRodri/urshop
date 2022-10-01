@@ -1,14 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from django.http import HttpRequest , HttpResponse
 from django.db import transaction
 from django.forms import formset_factory
 
+from .models import Product
 from .forms import ProductForm,BrandForm,ImageForm
 # Create your views here.
 
 
 
-def create_product(request : HttpRequest) -> HttpResponse:
+def product_create(request : HttpRequest) -> HttpResponse:
 
     # Form set to eventually grab up to 3 images for a product
     ImageFormSet = formset_factory(ImageForm,extra=3)
@@ -42,4 +43,12 @@ def create_product(request : HttpRequest) -> HttpResponse:
         'image_form_set' : image_form_set
     }
 
-    return render(request,template_name='products/create_product.html',context = context)
+    return render(request,template_name='products/product_create.html',context = context)
+
+def product_detail(request : HttpRequest, slug : str) -> HttpResponse:
+    product = get_object_or_404(Product,slug=slug)
+
+    context ={
+        'product' : product
+    }
+    return render(request,template_name='products/product_detail.html',context = context)

@@ -1,5 +1,5 @@
 
-
+from django.urls import reverse
 from django.db import models
 
 from core.models import TimeStampedModel
@@ -39,6 +39,10 @@ class Product(TimeStampedModel):
     
     def __str__(self) -> str:
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("products:detail", kwargs={"slug": self.slug})
+    
 
 class Image(TimeStampedModel):
     title = models.CharField(max_length=128,blank=True)
