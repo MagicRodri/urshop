@@ -1,6 +1,7 @@
 from decimal import Decimal
 
-from django.test import TestCase
+from django.test import TestCase,SimpleTestCase
+from django.urls import reverse
 
 from .models import Product,Brand,Image,Category
 # Create your tests here.
@@ -46,3 +47,15 @@ class ProductTests(TestCase):
         self.assertEqual(product.brand.brand_name,'test_brand')
         self.assertEqual(product.category.count(),2)
         self.assertTrue(product.is_active)
+
+
+class CreatePageTest(TestCase,SimpleTestCase):
+    def setUp(self):
+        self.response = self.client.get(reverse('products:create'))
+
+    def test_product_create_url_name(self):
+        
+        self.assertEqual(self.response.status_code,200)
+
+    def test_product_create_template(self):
+        self.assertTemplateUsed(self.response,'products/create_product.html')
