@@ -1,3 +1,4 @@
+from audioop import reverse
 from django.shortcuts import render,get_object_or_404
 from django.http import HttpRequest , HttpResponse
 from django.db import transaction
@@ -52,3 +53,20 @@ def product_detail(request : HttpRequest, slug : str) -> HttpResponse:
         'product' : product
     }
     return render(request,template_name='products/product_detail.html',context = context)
+
+def product_edit(request: HttpRequest,slug : str) -> HttpResponse:
+    ...
+    
+def product_delete(request: HttpRequest,slug : str) -> HttpResponse:
+
+    product = get_object_or_404(Product,slug=slug)
+    if request.method == 'POST':
+        product.delete()
+        return HttpResponse('Product deleted successfully')
+    return render(request,'products/product_delete.html')
+
+def product_list(request: HttpRequest) -> HttpResponse:
+
+    products = Product.objects.all()
+
+    return render(request,template_name='products/product_list.html',context={'products' : products})
