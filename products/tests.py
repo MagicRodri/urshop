@@ -4,24 +4,32 @@ from unicodedata import name
 
 from django.test import TestCase,SimpleTestCase
 from django.urls import reverse
+from django.utils.text import slugify
 
 from .models import Product,Brand,Image,Category
 # Create your tests here.
 
 class CategoryTests(TestCase):
+
+
+    def setUp(self) -> None:
+        self.category = category=Category.objects.create(name='test_category',description='test_description')
+        self.category_without_descrtion=Category.objects.create(name='test_category2',slug='cat-slug')
+
     def test_category_creation(self):
-        category=Category.objects.create(name='test_category',description='test_description')
-
-        category_without_descrtion=Category.objects.create(name='test_category2')
-
         self.assertEqual(Category.objects.count(),2)
-        self.assertEqual(category.name,'test_category')
-        self.assertEqual(category.description,'test_description')
+        self.assertEqual(self.category.name,'test_category')
+        self.assertEqual(self.category.description,'test_description')
+
+    def test_category_auto_slug(self):
+        self.assertFalse(len(self.category.slug) == 0)
+        self.assertTrue(self.category.slug == slugify(self.category.name) )
 
 class BranTests(TestCase):
+
+
     def test_brand_creation(self):
         brand = Brand.objects.create(name='test_brand')
-
         self.assertEqual(Brand.objects.count(),1)
         self.assertTrue(brand.name == 'test_brand')
 
@@ -59,7 +67,7 @@ class ProductTests(TestCase):
     def test_product_slug_auto_creation(self):
 
         self.assertFalse(self.product.slug=='')
-        print(self.product.slug)
+        self.assertTrue(self.product.slug == slugify(self.product.name))
 
     def test_product_slug_uniqueness(self):
 

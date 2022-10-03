@@ -14,15 +14,15 @@ class ProductForm(forms.ModelForm):
 
 
 
-    def clean_quantity(self):
-        quantity = self.cleaned_data.get('quantity')
+    # def clean_quantity(self):
+    #     quantity = self.cleaned_data.get('quantity')
 
-        if quantity < 0 :
-            raise ValidationError('Quantity can not be negative')
-        elif not isinstance(quantity,int):
-            raise ValidationError('Quantity must be positive integer')
+    #     if quantity < 0 :
+    #         raise ValidationError('Quantity can not be negative')
+    #     elif not isinstance(quantity,int):
+    #         raise ValidationError('Quantity must be positive integer')
 
-        return quantity
+    #     return quantity
 
         
     def clean(self):

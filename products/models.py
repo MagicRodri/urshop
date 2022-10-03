@@ -1,6 +1,9 @@
 
+from wsgiref.validate import validator
 from django.urls import reverse
 from django.db import models
+
+from .utils import product_quantity_validator
 
 from core.models import TimeStampedModel
 # Create your models here.
@@ -34,7 +37,7 @@ class Product(TimeStampedModel):
     description = models.TextField()
     price = models.DecimalField(decimal_places=2,max_digits=15,default=9.99)
     old_price = models.DecimalField(decimal_places=2,max_digits=15,default=0, blank=True)
-    quantity = models.IntegerField(default=1)
+    quantity = models.IntegerField(default=1,validators = [product_quantity_validator])
     is_active = models.BooleanField(default=True)
     
     def __str__(self) -> str:
