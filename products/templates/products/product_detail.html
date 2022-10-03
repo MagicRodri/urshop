@@ -7,5 +7,6 @@
         <p>{{product.description}}</p>
         <a href={% url 'products:edit' product.slug %}>Edit</a>
         <a href={% url 'products:delete' product.slug %}>Delete</a>
+        <a href={% url 'carts:add' product.slug %}>Add to cart</a>
     </article>
 {% endblock content %}

@@ -11,8 +11,8 @@ from .views import (
 
 app_name = 'accounts'
 urlpatterns = [
-     path('delete_profile',delete_profile_view,name='delete'),
-    path('edit_profile',edit_profile_view,name='edit'),
+     path('delete_profile/',delete_profile_view,name='delete'),
+    path('edit_profile/',edit_profile_view,name='edit'),
     path('login/',login_view,name='login'),
     path('logout/',logout_view,name='logout'),
     path('upload_pp/',upload_pp_view,name='upload-pp'),

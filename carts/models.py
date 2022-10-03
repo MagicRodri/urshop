@@ -16,9 +16,13 @@ class Cart(TimeStampedModel):
 
     cart_id = models.CharField(max_length=128,blank = True)
     customer = models.OneToOneField(User,blank=True,null = True,on_delete = models.CASCADE)
-
-    def items(self):
-        self.items.all()
+    
+    @property
+    def total(self) -> float:
+        total = 0
+        for item in self.items.all():
+            total += item.total
+        return total
 
 class CartItem(TimeStampedModel):
 
