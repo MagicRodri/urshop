@@ -6,7 +6,7 @@ from core.models import TimeStampedModel
 # Create your models here.
 
 class Category(TimeStampedModel):
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128,unique=True)
     slug = models.SlugField(max_length=128,blank=True,unique=True,null=True)
     description = models.TextField(blank = True)
     is_active = models.BooleanField(default=True)
@@ -19,7 +19,7 @@ class Category(TimeStampedModel):
         return self.name
 
 class Brand(TimeStampedModel):
-    brand_name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128)
 
     def __str__(self) -> str:
         return self.name

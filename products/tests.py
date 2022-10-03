@@ -20,10 +20,10 @@ class CategoryTests(TestCase):
 
 class BranTests(TestCase):
     def test_brand_creation(self):
-        brand = Brand.objects.create(brand_name='test_brand')
+        brand = Brand.objects.create(name='test_brand')
 
         self.assertEqual(Brand.objects.count(),1)
-        self.assertTrue(brand.brand_name == 'test_brand')
+        self.assertTrue(brand.name == 'test_brand')
 
 class ImageTests(TestCase):
     ...
@@ -33,7 +33,7 @@ class ProductTests(TestCase):
 
     def setUp(self) -> None:
         
-        brand = Brand.objects.create(brand_name='test_brand')
+        brand = Brand.objects.create(name='test_brand')
         category=Category.objects.create(name='test_category',description='test_description')
         category_without_descrtion=Category.objects.create(name='test_category2')
 
@@ -52,7 +52,7 @@ class ProductTests(TestCase):
         self.assertEqual(self.product.name,'test_product')
         self.assertEqual(self.product.description,'test')
         self.assertEqual(float(self.product.price),9.99)
-        self.assertEqual(self.product.brand.brand_name,'test_brand')
+        self.assertEqual(self.product.brand.name,'test_brand')
         self.assertEqual(self.product.category.count(),2)
         self.assertTrue(self.product.is_active)
 

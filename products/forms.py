@@ -55,7 +55,7 @@ class BrandForm(forms.ModelForm):
 
     class Meta:
         model = Brand
-        fields = ['brand_name']
+        fields = ['name']
 
 class ImageForm(forms.ModelForm):
     """
