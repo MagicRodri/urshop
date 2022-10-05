@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
-from django.test import TestCase
-
+from django.test import TestCase,SimpleTestCase
+from django.urls import reverse
 
 from products.models import Product
 from .models import Cart,CartItem
@@ -12,6 +12,16 @@ class TestCart(TestCase):
 
     def test_cart_creation(self):
         self.assertNotEqual(Cart.objects.count(),0)
+
+class TestCartTemplate(TestCase,SimpleTestCase):
+
+    def test_cart_detail_template(self):
+        self.assertTemplateUsed('carts/cart_detail.html')
+
+    
+    def test_cart_detail_url(self):
+        response = self.client.get(reverse('carts:detail'))
+        self.assertTrue(response.status_code == 200)
 
 class TestCartItem(TestCase):
     def setUp(self) -> None:
