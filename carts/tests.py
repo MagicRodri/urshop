@@ -4,6 +4,7 @@ from django.test import TestCase
 from products.models import Product
 from .models import Cart,CartItem
 # Create your tests here.
+
 class TestCart(TestCase):
     def setUp(self) -> None:
         self.cart = Cart.objects.create()
