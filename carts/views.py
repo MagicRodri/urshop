@@ -25,9 +25,9 @@ def cart_add(request:HttpRequest,product_slug : str):
     if not created:
         item.quantity += 1
         item.save()
-        return redirect(reverse('carts:detail'))
+        return redirect(reverse('products:list'))
 
-    return render(request,'carts/cart_add.html',context={})
+    return redirect(reverse('products:list'))
 
 
 def cart_detail(request):
