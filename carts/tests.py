@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 
@@ -23,3 +24,9 @@ class TestCartItem(TestCase):
 
     def test_cart_item_total(self):
         self.assertTrue(self.cart_item.total == self.cart_item.product.price * self.cart_item.quantity)
+
+    def test_cart_item_quantity_validator(self):
+        item = self.cart_item
+        item.quantity = 6
+        with self.assertRaises(ValidationError):
+            item.save()

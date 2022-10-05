@@ -3,7 +3,7 @@ from wsgiref.validate import validator
 from django.urls import reverse
 from django.db import models
 
-from .utils import product_quantity_validator
+from .validators import product_quantity_validator
 
 from core.models import TimeStampedModel
 # Create your models here.

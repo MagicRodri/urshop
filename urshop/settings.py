@@ -155,3 +155,16 @@ AUTH_USER_MODEL = 'accounts.User'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Cookie name. This can be whatever you want.
+SESSION_COOKIE_NAME = "sessionid"
+# Whether a user's session cookie expires when the web browser is closed.
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+# Age of cookie, in seconds (default: 2 weeks).
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7 * 2
+# The module to store session data
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+# Directory to store session files if using the file session module. If None,
+# the backend will use a sensible default.
+SESSION_FILE_PATH = None

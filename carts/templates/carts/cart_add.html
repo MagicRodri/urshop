@@ -1,0 +1,8 @@
+{% extends 'products/product_list.html' %}
+
+{% block content %}
+    {% if message %}
+        <p>{{message}}</p>
+    {% endif %}
+    {{ block.super }}
+{% endblock content %}
