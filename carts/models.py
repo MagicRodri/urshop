@@ -1,5 +1,6 @@
 
 from django.db import models 
+from django.db.models.functions import Coalesce
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
@@ -40,7 +41,7 @@ class Cart(TimeStampedModel):
 
     @property
     def total(self) -> float:
-        total = self.items.all().aggregate(total = models.Sum('product__price')) # a dict
+        total = self.items.all().aggregate(total = Coalesce(models.Sum('product__price'),0.0,output_field=models.FloatField())) # a dict
         return total['total']
 
 class CartItem(TimeStampedModel):
