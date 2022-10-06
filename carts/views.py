@@ -5,12 +5,11 @@ from django.urls import reverse
 
 from products.models import Product
 from .models import CartItem,Cart
-from .utils import get_cart_id
 # Create your views here.
 
 
 def cart_add(request:HttpRequest,product_slug : str):
-    
+
     product = get_object_or_404(Product,slug=product_slug)
 
     cart , _= Cart.objects.get_or_new(request)
