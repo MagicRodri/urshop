@@ -1,23 +1,38 @@
 
-from django.db import models
+from django.db import models 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.http import HttpRequest
 
 from products.models import Product
 from core.models import TimeStampedModel
-
+from .utils import get_cart_id
 # Create your models here.
 
 User = get_user_model()
 
     
+class CartManager(models.Manager):
 
+    
+    def get_or_new(self,request : HttpRequest = None):
+
+        """
+            Get or create a new cart object based on request
+        """
+
+        if request.user.is_authenticated:
+            return self.model.objects.get_or_create(customer = request.user)
+        else:
+            return self.model.objects.get_or_create(cart_id = get_cart_id(request))
 
 class Cart(TimeStampedModel):
+
 
     cart_id = models.CharField(max_length=128,blank = True)
     customer = models.OneToOneField(User,blank=True,null = True,on_delete = models.CASCADE)
 
+    objects = CartManager()
     def __str__(self) -> str:
         if self.customer:
             return str(self.customer)
@@ -25,10 +40,8 @@ class Cart(TimeStampedModel):
 
     @property
     def total(self) -> float:
-        total = 0
-        for item in self.items.all():
-            total += item.total
-        return total
+        total = self.items.all().aggregate(total = models.Sum('product__price')) # a dict
+        return total['total']
 
 class CartItem(TimeStampedModel):
 

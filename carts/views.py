@@ -10,16 +10,10 @@ from .utils import get_cart_id
 
 
 def cart_add(request:HttpRequest,product_slug : str):
-
-    user = request.user
+    
     product = get_object_or_404(Product,slug=product_slug)
 
-    cart : Cart
-
-    if request.user.is_authenticated:
-        cart , _ =  Cart.objects.get_or_create(customer = user)
-    else:
-        cart , _ =  Cart.objects.get_or_create(cart_id = get_cart_id(request))
+    cart , _= Cart.objects.get_or_new(request)
 
     item , created = CartItem.objects.get_or_create(cart=cart,product=product)
     if not created:
@@ -32,12 +26,7 @@ def cart_add(request:HttpRequest,product_slug : str):
 
 def cart_detail(request):
 
-    cart : Cart
-
-    if request.user.is_authenticated:
-        cart , _ =  Cart.objects.get_or_create(customer = request.user)
-    else:
-        cart , _ =  Cart.objects.get_or_create(cart_id = get_cart_id(request))
+    cart , _ = Cart.objects.get_or_new(request)
 
     context = {
         'cart' : cart,
