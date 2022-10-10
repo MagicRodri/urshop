@@ -1,8 +1,10 @@
 {% extends '_base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
 
 
 {% block content %}
-    <article>
+    <form action="" method="post">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
               <div class="col-12">
@@ -12,8 +14,10 @@
                       <div class="col-lg-8">
                         <div class="p-5">
                           <div class="d-flex justify-content-between align-items-center mb-5">
-                            <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
-                            <h6 class="mb-0 text-muted">3 items</h6>
+                            <div class="md-12" >
+                                {% csrf_token %}
+                                {{ address_form|crispy }}
+                            </div>
                           </div>
       
                           <hr class="my-4">
@@ -94,9 +98,8 @@
                             <h5 class="text-uppercase">Total price</h5>
                             <h5>$ {{cart.total}}</h5>
                           </div>
-        
-                          <a href={% url 'orders:create' %} class="btn btn-dark btn-block btn-lg"
-                            data-mdb-ripple-color="dark">Proceed to checkout</a>
+                          <button class="btn btn-dark btn-block btn-lg"
+                          data-mdb-ripple-color="dark" type="submit">Proceed to payment</button>
         
                         </div>
                       </div>
@@ -106,5 +109,5 @@
               </div>
             </div>
           </div>
-    </article>
+    </form>
 {% endblock content %}
