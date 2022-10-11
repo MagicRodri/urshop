@@ -1,5 +1,11 @@
 import random
+
 from django.utils.text import slugify
+from django.http import HttpRequest
+
+
+SESSION_USER_ID_KEY = 'urshop_anonymous_user_id'
+
 
 def slugify_instance_name(instance,save=False,new_slug=None):
     """
@@ -20,3 +26,25 @@ def slugify_instance_name(instance,save=False,new_slug=None):
     if save : 
         instance.save()
     return instance
+
+
+def get_user_id(request : HttpRequest = None) -> str:
+    
+    """
+        Function to retrieve a user's session id
+    """
+    if not request.session.get(SESSION_USER_ID_KEY):
+
+        request.session[SESSION_USER_ID_KEY] = generate_id()
+
+    return request.session[SESSION_USER_ID_KEY]
+
+def generate_id(k:int = 50) -> str:
+    """
+        Generate a random id of length of k
+        Default k=50 
+    """
+
+    a ='ABCDEFGHIJKLMNOPQRQSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&-+=_*()'
+
+    return ''.join(random.choices(a,k=k))

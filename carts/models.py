@@ -7,7 +7,7 @@ from django.http import HttpRequest
 
 from products.models import Product
 from core.models import TimeStampedModel
-from .utils import get_cart_id
+from core.utils import get_user_id
 # Create your models here.
 
 User = get_user_model()
@@ -25,7 +25,7 @@ class CartManager(models.Manager):
         if request.user.is_authenticated:
             return self.model.objects.get_or_create(customer = request.user)
         else:
-            return self.model.objects.get_or_create(cart_id = get_cart_id(request))
+            return self.model.objects.get_or_create(cart_id = get_user_id(request))
 
 class Cart(TimeStampedModel):
 

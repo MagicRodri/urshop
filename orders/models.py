@@ -1,8 +1,10 @@
 
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.http import HttpRequest
 
 from core.models import TimeStampedModel
+from core.utils import get_user_id
 from carts.models import Cart
 # Create your models here.
 User = get_user_model()
@@ -31,6 +33,18 @@ class Address(TimeStampedModel):
     class Meta:
         verbose_name_plural = 'Addresses'
 
+class OrderManager(models.Manager):
+
+    def get_or_new(self,request : HttpRequest = None):
+
+        """
+            Get or create a new order object based on request
+        """
+
+        if request.user.is_authenticated:
+            return self.model.objects.get_or_create(user = request.user)
+        else:
+            return self.model.objects.get_or_create(cart_id = get_user_id(request))
 
 class Order(TimeStampedModel):
 
@@ -53,3 +67,5 @@ class Order(TimeStampedModel):
     # payment_type = models.CharField(max_lenght = 16,)
     status = models.CharField(max_length = 16, default = CREATED ,choices = ORDER_STATUS)
     active = models.BooleanField(default = True)
+
+    objects = OrderManager()
