@@ -4,7 +4,7 @@
 
 
 {% block content %}
-    <form action="" method="post">
+    <section >
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
               <div class="col-12">
@@ -14,10 +14,10 @@
                       <div class="col-lg-8">
                         <div class="p-5">
                           <div class="d-flex justify-content-between align-items-center mb-5">
-                            <div class="md-12" >
+                            <form id='address-form' action="" method="post" class="md-12" >
                                 {% csrf_token %}
                                 {{ address_form|crispy }}
-                            </div>
+                            </form>
                           </div>
       
                           <hr class="my-4">
@@ -98,7 +98,7 @@
                             <h5 class="text-uppercase">Total price</h5>
                             <h5>$ {{cart.total}}</h5>
                           </div>
-                          <button class="btn btn-dark btn-block btn-lg"
+                          <button id="checkout-button" class="btn btn-dark btn-block btn-lg"
                           data-mdb-ripple-color="dark" type="submit">Proceed to payment</button>
         
                         </div>
@@ -109,5 +109,65 @@
               </div>
             </div>
           </div>
-    </form>
+        </section>
 {% endblock content %}
+
+{% block js %}
+
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      // Create an instance of the Stripe object with your publishable API key
+      const stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+      const checkoutButton = document.getElementById("checkout-button");
+      const addressForm = document.getElementById('address-form');
+      
+      checkoutButton.addEventListener("click", function (e) {
+        e.preventDefault()
+
+        const addressFormData = new FormData(addressForm);
+
+        fetch("{% url 'orders:create' %}",{
+          method: 'POST',
+          body: addressFormData
+        })
+        .then(function (response){
+            return response.json();
+        })
+        .then(function (json_response){
+            if (json_response.success){
+              fetch("{% url 'payments:create-checkout-session' cart.pk %}", {
+              method: "POST",
+              headers: {
+                  'X-CSRFToken': csrftoken
+              }
+            })
+              .then(function (response) {
+                return response.json();
+              })
+              .then(function (session) {
+                return stripe.redirectToCheckout({ sessionId: session.id });
+              })
+              .then(function (result) {
+                // If redirectToCheckout fails due to a browser or network
+                // error, you should display the localized error message to your
+                // customer using error.message.
+                if (result.error) {
+                  alert(result.error.message);
+                }
+              })
+              .catch(function (error) {
+                console.error("Error:", error);
+              });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        
+      });
+    </script>
+{% endblock js %}

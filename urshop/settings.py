@@ -160,6 +160,7 @@ AUTH_USER_MODEL = 'accounts.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# Session config
 # Cookie name. This can be whatever you want.
 SESSION_COOKIE_NAME = "sessionid"
 # Whether a user's session cookie expires when the web browser is closed.
@@ -171,3 +172,9 @@ SESSION_ENGINE = "django.contrib.sessions.backends.db"
 # Directory to store session files if using the file session module. If None,
 # the backend will use a sensible default.
 SESSION_FILE_PATH = None
+
+
+# Stripe config
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_KEY = ''

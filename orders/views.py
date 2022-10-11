@@ -1,5 +1,8 @@
+
 from django.shortcuts import render, redirect
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse,JsonResponse
+from django.urls import reverse
+from django.conf import settings
 
 from .models import Order, Address
 from .forms import AddressForm
@@ -12,6 +15,13 @@ def order_create(request : HttpRequest):
 
     address_form = AddressForm()
     cart , _ = Cart.objects.get_or_new(request)
+
+    context = {
+        'address_form' : address_form,
+        'cart' : cart,
+        'items' : cart.items.all(),
+        'STRIPE_PUBLIC_KEY' : settings.STRIPE_PUBLIC_KEY
+    }
 
     if request.method == 'POST':
 
@@ -32,11 +42,8 @@ def order_create(request : HttpRequest):
             else:
                 order.order_id = get_user_id(request)
                 order.save()
+            return JsonResponse({
+                'success' : True
+            })
 
-            return HttpResponse('Order submitted')
-    context = {
-        'address_form' : address_form,
-        'cart' : cart,
-        'items' : cart.items.all()
-    }
     return render(request,'orders/order_create.html', context = context)
