@@ -1,9 +1,14 @@
 version: "3.9"
 
 services:
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    container_name: stripe-cli
+    command: "listen --api-key ${STRIPE_API_KEY} --device-name ${STRIPE_DEVICE_NAME} --forward-to 127.0.0.1:8000/payments/webhooks/stripe/"
+    env_file:
+      - .env
   web:
     build: .
-
     command:
       sh -c "python manage.py wait_for_db &&
              python manage.py runserver 0.0.0.0:8000"

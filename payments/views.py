@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.conf import settings
-from django.http import JsonResponse,HttpRequest
+from django.http import JsonResponse,HttpRequest,HttpResponse
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from carts.models import Cart
 
@@ -14,6 +15,16 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 YOUR_DOMAIN = 'http://127.0.0.1:8000'
+
+
+def payments_success(request):
+
+    return render(request,'payments/payment_success.html')
+
+def payments_cancel(request):
+
+    return render(request,'payments/payment_cancel.html')
+
 
 def create_checkout_session(request : HttpRequest, pk : int):
 
@@ -48,10 +59,14 @@ def create_checkout_session(request : HttpRequest, pk : int):
     return redirect(checkout_session.url)
 
 
-def payments_success(request):
 
-    return render(request,'payments/payment_success.html')
+@csrf_exempt
+def stripe_webhook(request):
+    """
+        Stripe webhook view to fulfill orders 
+    """
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
 
-def payments_cancel(request):
 
-    return render(request,'payments/payment_cancel.html')
+    return HttpResponse(status=200)
