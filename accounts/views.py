@@ -1,9 +1,12 @@
 
-from django.contrib.auth import login, logout
-from django.shortcuts import redirect, render ,get_object_or_404
-from .forms import LoginForm, SignUpForm,PpUploadForm, EditProfileForm
+from django.contrib.auth import get_user_model, login, logout
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.contrib.auth import get_user_model
+
+from carts.models import Cart
+
+from .forms import EditProfileForm, LoginForm, PpUploadForm, SignUpForm
+
 # Create your views here.
 
 User = get_user_model()
@@ -16,6 +19,13 @@ def login_view(request):
         form = LoginForm(request,data=request.POST)
         if form.is_valid():
             user = form.get_user()
+            
+            # Grab the session cart and assign it to the user
+            cart, created = Cart.objects.get_or_new(request)
+            if not created:
+                cart.cart_id = ''
+            cart.user = user
+            cart.save()
             # set user backend to the default to avoid multiple authentication backends conflict
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request,user)

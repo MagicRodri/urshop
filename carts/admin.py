@@ -1,11 +1,12 @@
 from django.contrib import admin
 
-from .models import Cart,CartItem
+from .models import Cart, CartItem
+
 # Register your models here.
 
 class CartAdmin(admin.ModelAdmin):
-    list_display = ['customer','cart_id']
-    search_fields = ['customer']
+    list_display = ['user','cart_id']
+    search_fields = ['user']
 
 admin.site.register(Cart,CartAdmin)
 

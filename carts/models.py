@@ -24,7 +24,7 @@ class CartManager(models.Manager):
         """
 
         if request.user.is_authenticated:
-            return self.model.objects.get_or_create(customer = request.user)
+            return self.model.objects.get_or_create(user = request.user)
         else:
             return self.model.objects.get_or_create(cart_id = get_user_id(request))
 
@@ -32,12 +32,12 @@ class Cart(BaseModel):
 
 
     cart_id = models.CharField(max_length=128,blank = True)
-    customer = models.OneToOneField(User,blank=True,null = True,on_delete = models.CASCADE)
+    user = models.OneToOneField(User,blank=True,null = True,on_delete = models.CASCADE)
 
     objects = CartManager()
     def __str__(self) -> str:
-        if self.customer:
-            return str(self.customer)
+        if self.user:
+            return str(self.user)
         return self.cart_id    
 
     @property

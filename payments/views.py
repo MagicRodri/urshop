@@ -47,7 +47,7 @@ def create_checkout_session(request : HttpRequest, pk : int):
             payment_method_types=['card'],
             line_items=items,
             metadata = {
-                cart_id : cart.id 
+                'cart_id' : cart.id 
             },
             mode='payment',
             success_url=YOUR_DOMAIN + reverse('payments:success'),
