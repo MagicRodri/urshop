@@ -1,15 +1,17 @@
+import uuid
 
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.http import HttpRequest
 
-from core.models import TimeStampedModel
-from core.utils import get_user_id
 from carts.models import Cart
+from core.models import BaseModel
+from core.utils import get_user_id
+
 # Create your models here.
 User = get_user_model()
 
-class Address(TimeStampedModel):
+class Address(BaseModel):
 
 
     BILLING = 'BILLING'
@@ -46,7 +48,7 @@ class OrderManager(models.Manager):
         else:
             return self.model.objects.get_or_create(cart_id = get_user_id(request))
 
-class Order(TimeStampedModel):
+class Order(BaseModel):
 
     CREATED = 'CREATED'
     PAID = 'PAID'
@@ -66,6 +68,5 @@ class Order(TimeStampedModel):
     shipping_total = models.DecimalField(default = 0.00, decimal_places = 2, max_digits = 10)
     # payment_type = models.CharField(max_lenght = 16,)
     status = models.CharField(max_length = 16, default = CREATED ,choices = ORDER_STATUS)
-    active = models.BooleanField(default = True)
 
     objects = OrderManager()

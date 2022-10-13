@@ -1,15 +1,13 @@
-from django.shortcuts import render, redirect,get_object_or_404
+import stripe
 from django.conf import settings
-from django.http import JsonResponse,HttpRequest,HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from carts.models import Cart
 
-import stripe
-
 # This is your test secret API key.
-
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -48,6 +46,9 @@ def create_checkout_session(request : HttpRequest, pk : int):
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=items,
+            metadata = {
+                cart_id : cart.id 
+            },
             mode='payment',
             success_url=YOUR_DOMAIN + reverse('payments:success'),
             cancel_url=YOUR_DOMAIN + reverse('payments:cancel'),
@@ -67,6 +68,24 @@ def stripe_webhook(request):
     """
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
 
+    try:
+        event = stripe.Webhook.construct_event(
+            payload,sig_header,settings.STRIPE_WEBHOOK_KEY
+        )
+    except ValueError as e:
+
+        # Invalid payload
+        return HttpResponse(status = 400)
+
+    except stripe.error.SignatureVerification as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        print(session)
+    # Fulfill the purchase...
 
     return HttpResponse(status=200)

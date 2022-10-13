@@ -1,13 +1,14 @@
 
-from django.db import models 
-from django.db.models.functions import Coalesce
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.db.models.functions import Coalesce
 from django.http import HttpRequest
 
-from products.models import Product
-from core.models import TimeStampedModel
+from core.models import BaseModel
 from core.utils import get_user_id
+from products.models import Product
+
 # Create your models here.
 
 User = get_user_model()
@@ -27,7 +28,7 @@ class CartManager(models.Manager):
         else:
             return self.model.objects.get_or_create(cart_id = get_user_id(request))
 
-class Cart(TimeStampedModel):
+class Cart(BaseModel):
 
 
     cart_id = models.CharField(max_length=128,blank = True)
@@ -44,7 +45,7 @@ class Cart(TimeStampedModel):
         total = self.items.all().aggregate(total = Coalesce(models.Sum('product__price'),0.0,output_field=models.FloatField())) # a dict
         return total['total']
 
-class CartItem(TimeStampedModel):
+class CartItem(BaseModel):
 
     cart = models.ForeignKey(Cart,related_name = 'items',on_delete = models.CASCADE)
     product = models.ForeignKey(Product,on_delete = models.CASCADE)

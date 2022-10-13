@@ -1,18 +1,17 @@
 
-from wsgiref.validate import validator
-from django.urls import reverse
 from django.db import models
+from django.urls import reverse
+
+from core.models import BaseModel
 
 from .validators import product_quantity_validator
 
-from core.models import TimeStampedModel
 # Create your models here.
 
-class Category(TimeStampedModel):
+class Category(BaseModel):
     name = models.CharField(max_length=128,unique=True)
     slug = models.SlugField(max_length=128,blank=True,unique=True,null=True)
     description = models.TextField(blank = True)
-    is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = 'Categories'
@@ -21,7 +20,7 @@ class Category(TimeStampedModel):
 
         return self.name
 
-class Brand(TimeStampedModel):
+class Brand(BaseModel):
     name = models.CharField(max_length=128)
 
     def __str__(self) -> str:
@@ -29,7 +28,7 @@ class Brand(TimeStampedModel):
 
     
 
-class Product(TimeStampedModel):
+class Product(BaseModel):
     name = models.CharField(max_length=128)
     slug = models.SlugField(max_length=128,blank=True,unique=True,null=True)
     brand = models.ForeignKey(Brand,blank=True,null=True,on_delete=models.SET_NULL,related_name = 'products')
@@ -38,7 +37,6 @@ class Product(TimeStampedModel):
     price = models.DecimalField(decimal_places=2,max_digits=15,default=9.99)
     old_price = models.DecimalField(decimal_places=2,max_digits=15,default=0, blank=True)
     quantity = models.IntegerField(default=1,validators = [product_quantity_validator])
-    is_active = models.BooleanField(default=True)
     
     def __str__(self) -> str:
         return self.name
@@ -47,7 +45,7 @@ class Product(TimeStampedModel):
         return reverse("products:detail", kwargs={"slug": self.slug})
     
 
-class Image(TimeStampedModel):
+class Image(BaseModel):
     title = models.CharField(max_length=128,blank=True)
     image = models.ImageField(upload_to = 'products/')
     product = models.ForeignKey(Product,related_name='images',on_delete=models.CASCADE)
