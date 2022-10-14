@@ -1,10 +1,12 @@
 
-from django.shortcuts import render,get_object_or_404,redirect
 from django.http import HttpRequest
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from products.models import Product
-from .models import CartItem,Cart
+
+from .models import Cart, CartItem
+
 # Create your views here.
 
 
@@ -16,8 +18,7 @@ def cart_add(request:HttpRequest,product_slug : str):
 
     item , created = CartItem.objects.get_or_create(cart=cart,product=product)
     if not created:
-        item.quantity += 1
-        item.save()
+        item.increment()
         return redirect(reverse('products:list'))
 
     return redirect(reverse('products:list'))

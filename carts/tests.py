@@ -1,9 +1,11 @@
 from django.core.exceptions import ValidationError
-from django.test import TestCase,SimpleTestCase
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
 from products.models import Product
-from .models import Cart,CartItem
+
+from .models import Cart, CartItem
+
 # Create your tests here.
 
 class TestCart(TestCase):
@@ -25,9 +27,9 @@ class TestCartTemplate(TestCase,SimpleTestCase):
 
 class TestCartItem(TestCase):
     def setUp(self) -> None:
-        cart = Cart.objects.create()
-        product = Product.objects.create(name='test',description='Test',quantity=5)
-        self.cart_item = CartItem.objects.create(cart = cart,product = product,quantity = 3)
+        self.cart = Cart.objects.create()
+        self.product = Product.objects.create(name='test',description='Test',quantity=10)
+        self.cart_item = CartItem.objects.create(cart = self.cart,product = self.product,quantity = 3)
 
     def test_cart_item_creation(self):
         self.assertNotEqual(CartItem.objects.count(),0)
@@ -37,6 +39,19 @@ class TestCartItem(TestCase):
 
     def test_cart_item_quantity_validator(self):
         item = self.cart_item
-        item.quantity = 6
+        item.quantity = 11
         with self.assertRaises(ValidationError):
             item.save()
+
+    def test_cart_item_quantity_incrementation(self):
+        item = self.cart_item
+        item.increment()
+        self.assertEqual(item.quantity,4)
+        item.increment(2)
+        self.assertEqual(item.quantity,6)
+
+    # def test_cart_update_on_save(self):
+    #     # this won't be created
+    #     cart_item = CartItem.objects.create(cart = self.cart,product = self.product,quantity = 2)
+    #     cart_item2 = CartItem.objects.create(cart = self.cart,product = self.product,quantity = 2)
+    #     self.assertEqual(cart_item.quantity , 4) # 2 + 2

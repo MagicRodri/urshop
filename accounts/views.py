@@ -1,5 +1,6 @@
 
 from django.contrib.auth import get_user_model, login, logout
+from django.db.models.query import prefetch_related_objects
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
@@ -18,17 +19,21 @@ def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request,data=request.POST)
         if form.is_valid():
-            user = form.get_user()
             
             # Grab the session cart and assign it to the user
-            cart, created = Cart.objects.get_or_new(request)
-            if not created:
-                cart.cart_id = ''
-            cart.user = user
-            cart.save()
+            guess_cart, _ = Cart.objects.get_or_new(request)
+
+            user = form.get_user()
             # set user backend to the default to avoid multiple authentication backends conflict
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request,user)
+            user_cart, _ = Cart.objects.get_or_new(request)
+            for item in guess_cart.items.all():
+                item.cart = user_cart
+                item.save()
+
+            guess_cart.delete()
+
             return redirect(reverse('home'))
 
         else:

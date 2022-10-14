@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.functions import Coalesce
+from django.db.models.signals import post_save, pre_save
 from django.http import HttpRequest
 
 from core.models import BaseModel
@@ -51,6 +52,11 @@ class CartItem(BaseModel):
     product = models.ForeignKey(Product,on_delete = models.CASCADE)
     quantity = models.IntegerField(default=1)
 
+
+    def increment(self,n=1):
+        self.quantity += n
+        self.save()
+
     @property
     def name(self) -> str:
         return self.product.name
@@ -75,3 +81,22 @@ class CartItem(BaseModel):
     def save(self,*args, **kwargs):
         self._validate_item_quantity()
         return super().save(*args, **kwargs)
+
+
+def cart_item_pre_save(instance,sender,*args, **kwargs):
+    qs = CartItem.objects.filter(cart = instance.cart, product=instance.product).exclude(id = instance.id)
+    print('pre:',qs.count())
+    if qs.count() == 1:
+        existing_item = qs.first()
+        existing_item.increment(instance.quantity)
+
+pre_save.connect(cart_item_pre_save,sender = CartItem)
+
+
+def cart_item_post_save(instance, sender,created,*args, **kwargs):
+
+    qs = CartItem.objects.filter(cart = instance.cart,product=instance.product).exclude(id = instance.id)
+    print('post:',qs.count())
+    if qs.count() == 1:
+        instance.delete()
+post_save.connect(cart_item_post_save, sender = CartItem) 
