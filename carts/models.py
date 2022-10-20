@@ -39,8 +39,8 @@ class Cart(BaseModel):
     cart_id = models.CharField(max_length=128,blank = True)
     user = models.ForeignKey(User,blank=True,null = True,on_delete = models.CASCADE)
 
-    actives = ActiveCartManager()
     objects = CartManager()
+    actives = ActiveCartManager()
     def __str__(self) -> str:
         if self.user:
             return str(self.user)

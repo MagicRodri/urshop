@@ -5,7 +5,7 @@ from .models import Cart, CartItem
 # Register your models here.
 
 class CartAdmin(admin.ModelAdmin):
-    list_display = ['user','cart_id']
+    list_display = ['user','cart_id','is_active']
     search_fields = ['user']
 
 admin.site.register(Cart,CartAdmin)
