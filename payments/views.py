@@ -93,6 +93,10 @@ def stripe_webhook(request):
         # change order status to paid
         order.status = Order.PAID
         order.save()
+        cart = order.cart
+        cart.is_active = False
+        cart.save()
+
 
 
     # Fulfill the purchase...
