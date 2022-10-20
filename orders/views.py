@@ -18,7 +18,6 @@ def order_create(request : HttpRequest):
 
     address_form = AddressForm()
     cart , _ = Cart.objects.get_or_new(request)
-
     context = {
         'address_form' : address_form,
         'cart' : cart,
@@ -42,11 +41,9 @@ def order_create(request : HttpRequest):
             if request.user.is_authenticated:
                 order.user = request.user
                 order.save()
-            else:
-                order.order_id = get_user_id(request)
-                order.save()
+            
             return JsonResponse({
-                'success' : True
+                'success' : True,
             })
 
     return render(request,'orders/order_create.html', context = context)

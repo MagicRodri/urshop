@@ -1,11 +1,11 @@
 
 from django.forms import ModelForm
 
-
 from .models import CartItem
 
-class CartItemForm(ModelForm):
+
+class CartItemUpdateForm(ModelForm):
 
     class Meta:
         model = CartItem
-        fields = []
+        fields = ['quantity']

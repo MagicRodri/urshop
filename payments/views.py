@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from carts.models import Cart
+from orders.models import Order
 
 # This is your test secret API key.
 
@@ -27,7 +28,8 @@ def payments_cancel(request):
 def create_checkout_session(request : HttpRequest, pk : int):
 
     if request.method == 'POST':
-        cart = get_object_or_404(Cart, pk = pk)
+        cart = get_object_or_404(Cart.objects.prefetch_related('items'), pk = pk)
+        order = cart.order_set.first()
         items = []
         for item in cart.items.all():
             items.append(
@@ -47,7 +49,7 @@ def create_checkout_session(request : HttpRequest, pk : int):
             payment_method_types=['card'],
             line_items=items,
             metadata = {
-                'cart_id' : cart.id 
+                'order_pk' : order.pk 
             },
             mode='payment',
             success_url=YOUR_DOMAIN + reverse('payments:success'),
@@ -86,6 +88,13 @@ def stripe_webhook(request):
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
         print(session)
+        order_pk = session['metadata']['order_pk']
+        order = get_object_or_404(Order, pk = order_pk)
+        # change order status to paid
+        order.status = Order.PAID
+        order.save()
+
+
     # Fulfill the purchase...
 
     return HttpResponse(status=200)

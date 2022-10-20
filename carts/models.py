@@ -57,6 +57,10 @@ class CartItem(BaseModel):
         self.quantity += n
         self.save()
 
+    def increment(self,n=1):
+        self.quantity -= n
+        self.save()
+
     @property
     def name(self) -> str:
         return self.product.name

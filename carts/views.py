@@ -23,6 +23,10 @@ def cart_add(request:HttpRequest,product_slug : str):
 
     return redirect(reverse('products:list'))
 
+def cart_item_update(request:HttpRequest):
+
+    if request.method == 'POST':
+        ...
 
 def cart_detail(request):
 
