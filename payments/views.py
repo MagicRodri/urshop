@@ -28,7 +28,7 @@ def payments_cancel(request):
 def create_checkout_session(request : HttpRequest, pk : int):
 
     if request.method == 'POST':
-        cart = get_object_or_404(Cart.actives.prefetch_related('items'), pk = pk)
+        cart = get_object_or_404(Cart.objects.prefetch_related('items'), pk = pk)
         order = cart.order_set.first()
         items = []
         for item in cart.items.all():

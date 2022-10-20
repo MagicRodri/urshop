@@ -13,14 +13,16 @@ from products.models import Product
 # Create your models here.
 
 User = get_user_model()
+    
 
-class ActiveCartManager(models.Manager):
-
-    def get_queryset(self):
-        return super().get_queryset().filter( is_active = True)
+class CartQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(is_active = True)
     
 class CartManager(models.Manager):
 
+    def get_queryset(self):
+        return CartQuerySet(model=self.model,using=self.db)
     
     def get_or_new(self,request : HttpRequest = None):
 
@@ -29,9 +31,9 @@ class CartManager(models.Manager):
         """
 
         if request.user.is_authenticated:
-            return self.model.actives.get_or_create(user = request.user)
+            return self.get_queryset().active().get_or_create(user = request.user)
         else:
-            return self.model.actives.get_or_create(cart_id = get_user_id(request))
+            return self.get_queryset().active().get_or_create(cart_id = get_user_id(request))
 
 class Cart(BaseModel):
 
@@ -40,7 +42,6 @@ class Cart(BaseModel):
     user = models.ForeignKey(User,blank=True,null = True,on_delete = models.CASCADE)
 
     objects = CartManager()
-    actives = ActiveCartManager()
     def __str__(self) -> str:
         if self.user:
             return str(self.user)
