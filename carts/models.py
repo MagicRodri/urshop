@@ -58,12 +58,14 @@ class CartItem(BaseModel):
     product = models.ForeignKey(Product,on_delete = models.CASCADE)
     quantity = models.IntegerField(default=1)
 
+    def __str__(self) -> str:
+        return f'{self.product}:{self.quantity}'
 
     def increment(self,n=1):
         self.quantity += n
         self.save()
 
-    def increment(self,n=1):
+    def decrement(self,n=1):
         self.quantity -= n
         self.save()
 
@@ -94,8 +96,7 @@ class CartItem(BaseModel):
 
 
 def cart_item_pre_save(instance,sender,*args, **kwargs):
-    qs = CartItem.objects.filter(cart = instance.cart, product=instance.product).exclude(id = instance.id)
-    print('pre:',qs.count())
+    qs = CartItem.objects.filter(cart = instance.cart, product = instance.product).exclude(id = instance.id)
     if qs.count() == 1:
         existing_item = qs.first()
         existing_item.increment(instance.quantity)
@@ -106,7 +107,7 @@ pre_save.connect(cart_item_pre_save,sender = CartItem)
 def cart_item_post_save(instance, sender,created,*args, **kwargs):
 
     qs = CartItem.objects.filter(cart = instance.cart,product=instance.product).exclude(id = instance.id)
-    print('post:',qs.count())
     if qs.count() == 1:
         instance.delete()
+        
 post_save.connect(cart_item_post_save, sender = CartItem) 

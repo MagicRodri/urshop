@@ -33,6 +33,7 @@ class TestCartItem(TestCase):
 
     def test_cart_item_creation(self):
         self.assertNotEqual(CartItem.objects.count(),0)
+        self.assertEqual(CartItem.objects.count(),1)
 
     def test_cart_item_total(self):
         self.assertTrue(self.cart_item.total == self.cart_item.product.price * self.cart_item.quantity)
@@ -44,14 +45,16 @@ class TestCartItem(TestCase):
             item.save()
 
     def test_cart_item_quantity_incrementation(self):
-        item = self.cart_item
-        item.increment()
-        self.assertEqual(item.quantity,4)
-        item.increment(2)
-        self.assertEqual(item.quantity,6)
+        self.cart_item.increment()
+        self.assertEqual(self.cart_item.quantity,4)
+        self.cart_item.increment(2)
+        self.assertEqual(self.cart_item.quantity,6)
 
-    # def test_cart_update_on_save(self):
-    #     # this won't be created
-    #     cart_item = CartItem.objects.create(cart = self.cart,product = self.product,quantity = 2)
-    #     cart_item2 = CartItem.objects.create(cart = self.cart,product = self.product,quantity = 2)
-    #     self.assertEqual(cart_item.quantity , 4) # 2 + 2
+    # def test_cart_item_update_on_save(self):
+    #     # increment in pre_save not working within test for whatever reason
+    #     cart = Cart.objects.create(cart_id = 'test')
+    #     product = self.product
+    #     item = CartItem.objects.create(cart = cart, product = product, quantity = 1)
+    #     print(item)
+    #     item2 = CartItem.objects.create(cart = cart,product = product,quantity = 2)
+    #     print(item)
