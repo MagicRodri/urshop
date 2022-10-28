@@ -20,6 +20,17 @@ class CategoryTests(TestCase):
         self.assertFalse(len(self.category.slug) == 0)
         self.assertTrue(self.category.slug == slugify(self.category.name) )
 
+    def test_category_non_duplication(self):
+        
+        category = Category.objects.create(name='test')
+
+        # This won't be created
+        category2 = Category.objects.create(name='Test')
+        self.assertEqual(Category.objects.count(),3) # 2 + 1
+
+        with self.assertRaises(Category.DoesNotExist):
+            category2.refresh_from_db()    
+
 class BranTests(TestCase):
 
 
