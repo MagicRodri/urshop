@@ -12,14 +12,17 @@ from .validators import product_quantity_validator
 
 class Category(BaseModel):
     name = models.CharField(max_length=128,unique=True)
+    image = models.ImageField(upload_to = 'categories/',blank = True)
     slug = models.SlugField(max_length=128,blank=True,unique=True,null=True)
     description = models.TextField(blank = True)
 
     class Meta:
-        verbose_name_plural = 'Categories'
+        verbose_name_plural = 'Categories'  
 
     def save(self,*args, **kwargs):
-        qs = Category.objects.filter(name__iexact = self.name )
+        if self.image:
+            thumbnail_image(self.image)
+        qs = Category.objects.filter(name__iexact = self.name ).exclude(pk = self.pk)
         if qs.exists():
             return qs.first()
         super().save(*args, **kwargs)
