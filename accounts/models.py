@@ -1,11 +1,23 @@
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.signals import pre_save
+
+from core.utils import thumbnail_image
 
 # Create your models here.
 
 class User(AbstractUser):
-    picture = models.ImageField(upload_to = 'users/',blank = True, null = True)
+
+    SHOPPER = 'SHOPPER'
+    SELLER = 'SELLER'
+
+    USER_TYPE = (
+        (SHOPPER, 'Shopper'),
+        (SELLER, 'Seller'),
+    )
+    picture = models.ImageField(upload_to = 'users/',blank = True)
+    type = models.CharField(max_length = 16 ,choices = USER_TYPE, default = SHOPPER)
 
 
     def __str__(self) -> str:
@@ -13,4 +25,6 @@ class User(AbstractUser):
 
 
 def user_pre_save(instance,sender,*args, **kwargs):
-    ...
+    thumbnail_image(instance.picture)
+
+pre_save.connect(user_pre_save,sender = User)

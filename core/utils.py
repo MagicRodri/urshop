@@ -1,8 +1,8 @@
 import random
 
-from django.utils.text import slugify
 from django.http import HttpRequest
-
+from django.utils.text import slugify
+from PIL import Image
 
 SESSION_USER_ID_KEY = 'urshop_anonymous_user_id'
 
@@ -48,3 +48,13 @@ def generate_id(k:int = 50) -> str:
     a ='ABCDEFGHIJKLMNOPQRQSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&-+=_*()'
 
     return ''.join(random.choices(a,k=k))
+
+
+def thumbnail_image(image_field) -> None:
+    """
+        Create a thumbnail of the given image field's image and save it under the original image's path
+    """
+    IMG_MAX_SIZE = (800,800)
+    image = Image.open(image_field)
+    image.thumbnail(IMG_MAX_SIZE)
+    image.save(image_field.path)
