@@ -1,8 +1,10 @@
 
 from django.db import models
+from django.db.models.signals import pre_save
 from django.urls import reverse
 
 from core.models import BaseModel
+from core.utils import thumbnail_image
 
 from .validators import product_quantity_validator
 
@@ -22,7 +24,13 @@ class Category(BaseModel):
 
 class Brand(BaseModel):
     name = models.CharField(max_length=128)
-
+    
+    def save(self,*args, **kwargs):
+        qs = Brand.objects.filter(name__iexact = self.name )
+        if qs.exists():
+            return qs.first()
+        super().save(*args, **kwargs)
+        
     def __str__(self) -> str:
         return self.name
 
@@ -54,3 +62,9 @@ class Image(BaseModel):
         if self.title :
             return self.title
         return super().__str__()
+
+
+def image_pre_save(instance,sender,*args, **kwargs):
+    thumbnail_image(instance.image)
+
+pre_save.connect(image_pre_save,sender = Image)

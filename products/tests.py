@@ -1,12 +1,12 @@
 from decimal import Decimal
 from unicodedata import name
 
-
-from django.test import TestCase,SimpleTestCase
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 from django.utils.text import slugify
 
-from .models import Product,Brand,Image,Category
+from .models import Brand, Category, Image, Product
+
 # Create your tests here.
 
 class CategoryTests(TestCase):
@@ -32,6 +32,15 @@ class BranTests(TestCase):
         brand = Brand.objects.create(name='test_brand')
         self.assertEqual(Brand.objects.count(),1)
         self.assertTrue(brand.name == 'test_brand')
+
+    def test_brand_non_duplication(self):
+        brand = Brand.objects.create(name='test_brand')
+        # This won't be created
+        brand2 = Brand.objects.create(name='Test_brand')
+        self.assertEqual(Brand.objects.count(),1)
+
+        with self.assertRaises(Brand.DoesNotExist):
+            brand2.refresh_from_db()
 
 class ImageTests(TestCase):
     ...

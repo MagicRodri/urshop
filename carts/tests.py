@@ -50,11 +50,17 @@ class TestCartItem(TestCase):
         self.cart_item.increment(2)
         self.assertEqual(self.cart_item.quantity,6)
 
-    # def test_cart_item_update_on_save(self):
-    #     # increment in pre_save not working within test for whatever reason
-    #     cart = Cart.objects.create(cart_id = 'test')
-    #     product = self.product
-    #     item = CartItem.objects.create(cart = cart, product = product, quantity = 1)
-    #     print(item)
-    #     item2 = CartItem.objects.create(cart = cart,product = product,quantity = 2)
-    #     print(item)
+    def test_cart_item_update_on_save(self):
+        
+        cart = Cart.objects.create(cart_id = 'test')
+        product = self.product
+        item = CartItem.objects.create(cart = cart, product = product, quantity = 1)
+
+        # This won't be created, item will update instead
+        item2 = CartItem.objects.create(cart = cart,product = product,quantity = 2)
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity,3) # 1 + 2
+
+        with self.assertRaises(CartItem.DoesNotExist):
+            CartItem.refresh_from_db(item2)
