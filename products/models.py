@@ -18,8 +18,13 @@ class Category(BaseModel):
     class Meta:
         verbose_name_plural = 'Categories'
 
-    def __str__(self) -> str:
+    def save(self,*args, **kwargs):
+        qs = Category.objects.filter(name__iexact = self.name )
+        if qs.exists():
+            return qs.first()
+        super().save(*args, **kwargs)
 
+    def __str__(self) -> str:
         return self.name
 
 class Brand(BaseModel):
@@ -30,7 +35,7 @@ class Brand(BaseModel):
         if qs.exists():
             return qs.first()
         super().save(*args, **kwargs)
-        
+
     def __str__(self) -> str:
         return self.name
 
