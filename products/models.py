@@ -36,7 +36,7 @@ class Category(BaseModel):
         return self.name
 
 class Brand(BaseModel):
-    name = models.CharField(max_length=128)
+    name = models.CharField('brand-name',max_length=128)
     
     def save(self,*args, **kwargs):
         qs = Brand.objects.filter(name__iexact = self.name )
@@ -55,7 +55,7 @@ class Product(BaseModel):
     slug = models.SlugField(max_length=128,blank=True,unique=True,null=True)
     brand = models.ForeignKey(Brand,blank=True,null=True,on_delete=models.SET_NULL,related_name = 'products')
     category = models.ManyToManyField(Category)
-    description = models.TextField()
+    description = models.TextField(default = 'Description here!')
     price = models.DecimalField(decimal_places=2,max_digits=15,default=9.99)
     old_price = models.DecimalField(decimal_places=2,max_digits=15,default=0, blank=True)
     quantity = models.IntegerField(default=1,validators = [product_quantity_validator])
