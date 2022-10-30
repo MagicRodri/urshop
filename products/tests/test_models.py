@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils.text import slugify
 
 from products.models import Brand, Category, Product
 
+User = get_user_model()
 
 class CategoryTests(TestCase):
 
@@ -56,18 +58,19 @@ class ProductTests(TestCase):
 
     def setUp(self) -> None:
         
+        self.user = User.objects.create(username = 'Test')
         brand = Brand.objects.create(name='test_brand')
         category=Category.objects.create(name='test_category',description='test_description')
         category_without_descrtion=Category.objects.create(name='test_category2')
 
-        self.product = Product.objects.create(name = 'test_product',description = 'test',price = 9.99)
+        self.product = Product.objects.create(user = self.user,name = 'test_product',description = 'test',price = 9.99)
         self.product.brand = brand
         self.product.category.add(category,category_without_descrtion)
         self.product.save()
 
         self.number = 10
         for i in range(self.number):
-            Product.objects.create(name = 'test slug',description = f'test{i}',price = 9.99)
+            Product.objects.create(user = self.user,name = 'test slug',description = f'test{i}',price = 9.99)
 
 
     def test_product_creation(self):

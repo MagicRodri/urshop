@@ -1,4 +1,7 @@
 
+from email.policy import default
+
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.signals import pre_save
 from django.urls import reverse
@@ -9,6 +12,8 @@ from core.utils import thumbnail_image
 from .validators import product_quantity_validator
 
 # Create your models here.
+
+User = get_user_model()
 
 class Category(BaseModel):
     name = models.CharField(max_length=128,unique=True)
@@ -45,6 +50,7 @@ class Brand(BaseModel):
     
 
 class Product(BaseModel):
+    user = models.ForeignKey(User, related_name = 'products', on_delete = models.CASCADE)
     name = models.CharField(max_length=128)
     slug = models.SlugField(max_length=128,blank=True,unique=True,null=True)
     brand = models.ForeignKey(Brand,blank=True,null=True,on_delete=models.SET_NULL,related_name = 'products')

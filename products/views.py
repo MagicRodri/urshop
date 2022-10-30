@@ -1,11 +1,13 @@
 from audioop import reverse
-from django.shortcuts import render,get_object_or_404
-from django.http import HttpRequest , HttpResponse
+
 from django.db import transaction
 from django.forms import formset_factory
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404, render
 
+from .forms import BrandForm, ImageForm, ProductForm
 from .models import Product
-from .forms import ProductForm,BrandForm,ImageForm
+
 # Create your views here.
 
 
@@ -27,6 +29,7 @@ def product_create(request : HttpRequest) -> HttpResponse:
         if all([product_form.is_valid(),image_form_set.is_valid(),brand_form.is_valid()]):
             product = product_form.save(commit=False)
             brand = brand_form.save()
+            product.user = request.user
             product.brand = brand
             product.save()
             

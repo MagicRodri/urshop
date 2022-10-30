@@ -25,6 +25,7 @@ class User(AbstractUser):
 
 
 def user_pre_save(instance,sender,*args, **kwargs):
-    thumbnail_image(instance.picture)
+    if instance.picture:
+        thumbnail_image(instance.picture)
 
 pre_save.connect(user_pre_save,sender = User)

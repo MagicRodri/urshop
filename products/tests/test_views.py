@@ -1,19 +1,20 @@
 from decimal import Decimal
-from unicodedata import name
 
+from django.contrib.auth import get_user_model
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
 from products.models import Brand, Category, Image, Product
 
 # Create your tests here.
+User = get_user_model()
 
 class ProductViewsTest(TestCase,SimpleTestCase):
 
 
     def setUp(self):
-
-        self.product = Product.objects.create(name='test',description='Test description')
+        user = User.objects.create(username = 'Test')
+        self.product = Product.objects.create(user = user,name='test',description='Test description')
         self.create_response = self.client.get(reverse('products:create'))
         self.detail_response = self.client.get(self.product.get_absolute_url())
         self.delete_response = self.client.get(reverse('products:delete',kwargs={'slug':self.product.slug}))

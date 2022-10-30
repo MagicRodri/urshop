@@ -1,8 +1,9 @@
 
-from django import forms 
+from django import forms
 from django.core.exceptions import ValidationError
 
-from .models import Product,Brand,Category,Image
+from .models import Brand, Category, Image, Product
+
 
 class ProductForm(forms.ModelForm):
     """
