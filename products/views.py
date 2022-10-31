@@ -49,10 +49,13 @@ def product_create(request : HttpRequest) -> HttpResponse:
     return render(request,template_name='products/product_create.html',context = context)
 
 def product_detail(request : HttpRequest, slug : str) -> HttpResponse:
-    product = get_object_or_404(Product,slug=slug)
-
+    product = get_object_or_404(Product.objects.prefetch_related('images'),slug=slug)
+    product_images = product.images.all()
+    
     context ={
-        'product' : product
+        'product' : product,
+        'main_image' : product_images.first(),
+        'product_images' : product_images
     }
     return render(request,template_name='products/product_detail.html',context = context)
 

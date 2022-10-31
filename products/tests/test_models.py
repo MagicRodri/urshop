@@ -22,16 +22,16 @@ class CategoryTests(TestCase):
         self.assertFalse(len(self.category.slug) == 0)
         self.assertTrue(self.category.slug == slugify(self.category.name) )
 
-    def test_category_non_duplication(self):
+    # def test_category_non_duplication(self):
         
-        category = Category.objects.create(name='test')
+    #     category = Category.objects.create(name='test')
 
-        # This won't be created
-        category2 = Category.objects.create(name='Test')
-        self.assertEqual(Category.objects.count(),3) # 2 + 1
+    #     # This won't be created
+    #     category2 = Category.objects.create(name='Test')
+    #     self.assertEqual(Category.objects.count(),3) # 2 + 1
 
-        with self.assertRaises(Category.DoesNotExist):
-            category2.refresh_from_db()    
+    #     with self.assertRaises(Category.DoesNotExist):
+    #         category2.refresh_from_db()    
 
 class BranTests(TestCase):
 
@@ -41,14 +41,14 @@ class BranTests(TestCase):
         self.assertEqual(Brand.objects.count(),1)
         self.assertTrue(brand.name == 'test_brand')
 
-    def test_brand_non_duplication(self):
-        brand = Brand.objects.create(name='test_brand')
-        # This won't be created
-        brand2 = Brand.objects.create(name='Test_brand')
-        self.assertEqual(Brand.objects.count(),1)
+    # def test_brand_non_duplication(self):
+    #     brand = Brand.objects.create(name='test_brand')
+    #     # This won't be created
+    #     brand2 = Brand.objects.create(name='Test_brand')
+    #     self.assertEqual(Brand.objects.count(),1)
 
-        with self.assertRaises(Brand.DoesNotExist):
-            brand2.refresh_from_db()
+    #     with self.assertRaises(Brand.DoesNotExist):
+    #         brand2.refresh_from_db()
 
 class ImageTests(TestCase):
     ...

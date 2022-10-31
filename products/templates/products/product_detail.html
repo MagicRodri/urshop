@@ -1,13 +1,140 @@
 {% extends '_base.html' %}
 
+{% block css %}
+    <style>
+        .card
+        {
+            border:none;
+        }
+        .product
+        {
+            background-color: #eee
+        }
+        .brand
+        {
+            font-size: 13px
+        }
+
+        .price
+        {
+            color:var(--bs-primary);
+            font-weight: bold;
+        }
+        .color
+        {
+            margin-bottom:10px;
+        }
+        label.radio
+        {
+            cursor: pointer;
+        }
+        label.radio input
+        {
+            position: absolute;
+            top: 0;
+            left: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        label.radio span
+        {
+            padding: 2px 9px;
+            border: 2px solid var(--bs-primary);
+            display: inline-block;
+            color: var(--bs-primary);
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+        label.radio input:checked+span
+        {
+            border-color: var(--bs-primary);
+            background-color: var(--bs-primary);
+            color: #fff;
+        }
+        .cart i
+        {
+            margin-right: 10px;
+        }
+    </style>
+{% endblock css %}
 
 {% block content %}
 
     <article>
-        <h1>{{product.name}}</h1>
-        <p>{{product.description}}</p>
+        <div class="container mt-5 mb-5">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-10">
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="images p-3">
+                                    <div class="text-center p-4"> 
+                                        <img id="main-image" src={{main_image.image.url}} width="250"/> 
+                                    </div>
+                                    <div class="thumbnail text-center">
+                                        {% for image in product_images %}
+                                            <img src={{image.image.url}} width="70">
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="product p-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center"> <i class="fa fa-long-arrow-left"></i> <span class="ml-1">Back</span> </div> <i class="fa fa-shopping-cart text-muted"></i>
+                                    </div>
+                                    <div class="mt-4 mb-3">
+                                        <span class="text-uppercase text-muted brand">
+                                            {% if product.brand %}
+                                                {{product.brand}}
+                                            {% endif %}
+                                        </span>
+                                        <h5 class="text-uppercase">{{product.name}}</h5>
+                                        <div class="price d-flex flex-row align-items-center">
+                                            <span class="price">${{product.price}}</span>
+                                            <div class="ml-2"> 
+                                                <small class="text-danger fw-bold text-decoration-line-through old-price">
+                                                {% if product.old_price %}
+                                                    ${{product.old_price}}
+                                                {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="description">{{product.description}}</p>
+                                    <div class="sizes mt-5">
+                                        <h6 class="text-uppercase">Size</h6> <label class="radio"> <input type="radio" name="size" value="S" checked> <span>S</span> </label> <label class="radio"> <input type="radio" name="size" value="M"> <span>M</span> </label> <label class="radio"> <input type="radio" name="size" value="L"> <span>L</span> </label> <label class="radio"> <input type="radio" name="size" value="XL"> <span>XL</span> </label> <label class="radio"> <input type="radio" name="size" value="XXL"> <span>XXL</span> </label>
+                                    </div>
+                                    <div class="cart mt-4 align-items-center"> 
+                                        <a href={% url 'carts:add' product.slug %} class="btn btn-primary text-uppercase mr-2 px-4">
+                                            Add to cart
+                                        </a> 
+                                        <i class="fa fa-heart text-muted"></i> 
+                                        <i class="fa fa-share-alt text-muted"></i> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <a href={% url 'products:edit' product.slug %}>Edit</a>
         <a href={% url 'products:delete' product.slug %}>Delete</a>
-        <a href={% url 'carts:add' product.slug %}>Add to cart</a>
     </article>
 {% endblock content %}
+
+{% block js %}
+    <script>
+        const thumbnail = document.querySelector('.thumbnail');
+        
+        for (const img of thumbnail.children) {
+
+            img.addEventListener('click', function(e) {
+                const mainImage = document.getElementById('main-image');
+                mainImage.setAttribute('src',e.target.getAttribute('src'));
+            }
+            );
+        }
+    </script>
+{% endblock js %}

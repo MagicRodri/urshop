@@ -56,6 +56,9 @@ class BrandForm(forms.ModelForm):
     custom_names = {'name': 'brand-name'}
 
     def add_prefix(self, field_name):
+        """
+            Custom add_prefix so to overwrite the name ('name') attribute of the input form to 'brand-name' in order to avoid conflict with product's name input form during product creation
+        """
         field_name = self.custom_names.get(field_name, field_name)
         return super().add_prefix(field_name)
 

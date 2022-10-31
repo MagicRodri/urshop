@@ -17,7 +17,8 @@ User = get_user_model()
 
 class Category(BaseModel):
     name = models.CharField(max_length=128,unique=True)
-    image = models.ImageField(upload_to = 'categories/',blank = True)
+    image = models.ImageField(upload_to = 'categories/originals/',blank = True)
+    thumbnail = models.ImageField(upload_to = 'categories/thumbnails/',blank = True)
     slug = models.SlugField(max_length=128,blank=True,unique=True,null=True)
     description = models.TextField(blank = True)
 
@@ -26,10 +27,10 @@ class Category(BaseModel):
 
     def save(self,*args, **kwargs):
         if self.image:
-            thumbnail_image(self.image)
-        qs = Category.objects.filter(name__iexact = self.name ).exclude(pk = self.pk)
-        if qs.exists():
-            return qs.first()
+            thumbnail_image(self.image,self.thumbnail)
+        # qs = Category.objects.filter(name__iexact = self.name ).exclude(pk = self.pk)
+        # if qs.exists():
+        #     return qs.first()
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
@@ -39,9 +40,9 @@ class Brand(BaseModel):
     name = models.CharField('brand-name',max_length=128)
     
     def save(self,*args, **kwargs):
-        qs = Brand.objects.filter(name__iexact = self.name )
-        if qs.exists():
-            return qs.first()
+        # qs = Brand.objects.filter(name__iexact = self.name )
+        # if qs.exists():
+        #     return qs.first()
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
@@ -69,7 +70,8 @@ class Product(BaseModel):
 
 class Image(BaseModel):
     title = models.CharField(max_length=128,blank=True)
-    image = models.ImageField(upload_to = 'products/')
+    image = models.ImageField(upload_to = 'products/originals/')
+    thumbnail = models.ImageField(upload_to = 'products/thumbnails/', blank = True)
     product = models.ForeignKey(Product,related_name='images',on_delete=models.CASCADE)
 
     def __str__(self) -> str:
@@ -79,6 +81,6 @@ class Image(BaseModel):
 
 
 def image_pre_save(instance,sender,*args, **kwargs):
-    thumbnail_image(instance.image)
+    thumbnail_image(instance.image,instance.thumbnail)
 
 pre_save.connect(image_pre_save,sender = Image)
