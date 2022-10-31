@@ -1,3 +1,4 @@
+import os
 import random
 
 from django.http import HttpRequest
@@ -50,11 +51,26 @@ def generate_id(k:int = 50) -> str:
     return ''.join(random.choices(a,k=k))
 
 
-def thumbnail_image(image_field, thumbnail_field) -> None:
+def thumbnail_image(instance) -> None:
     """
         Create a thumbnail of the given image field's image and save it in the thumbails directory path
     """
+
     IMG_MAX_SIZE = (800,800)
-    image = Image.open(image_field)
+
+    # Check if thumbnails directory exists, otherwise create
+    thumbnail_relative_path = instance.thumbnail.field.upload_to
+    instance.thumbnail = thumbnail_relative_path
+    if not os.path.exists(instance.thumbnail.path):
+        os.makedirs(instance.thumbnail.path)
+
+    # Resize originale image    
+    image = Image.open(instance.image)
     image.thumbnail(IMG_MAX_SIZE)
-    image.save(thumbnail_field.path)
+
+    # Save resized image under thumbnail_<original name> in the thumbnails directory
+    original_image_name = os.path.basename(instance.image.path)
+    thumbnail_path = os.path.join(instance.thumbnail.path,f'thumbnail_{original_image_name}')
+    instance.thumbnail = os.path.join(thumbnail_relative_path,f'thumbnail_{original_image_name}')
+    with open(thumbnail_path,'w'):
+        image.save(thumbnail_path)
