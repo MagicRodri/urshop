@@ -1,6 +1,7 @@
 import os
 import random
 
+from django.conf import settings
 from django.http import HttpRequest
 from django.utils.text import slugify
 from PIL import Image
@@ -53,24 +54,40 @@ def generate_id(k:int = 50) -> str:
 
 def thumbnail_image(instance) -> None:
     """
-        Create a thumbnail of the given image field's image and save it in the thumbails directory path
+        Create a thumbnail of the given instance's image and save it in the thumbails directory path
+        Instance must have both image and thumbnail fields as models.ImageField
     """
 
     IMG_MAX_SIZE = (800,800)
+    
+    thumbnail_absolute_path = settings.MEDIA_ROOT / instance.thumbnail.field.upload_to
+    original_image_name = os.path.basename(instance.image.path)
 
     # Check if thumbnails directory exists, otherwise create
-    thumbnail_relative_path = instance.thumbnail.field.upload_to
-    instance.thumbnail = thumbnail_relative_path
-    if not os.path.exists(instance.thumbnail.path):
-        os.makedirs(instance.thumbnail.path)
+    if not thumbnail_absolute_path.exists():
+        os.makedirs(thumbnail_absolute_path)
 
     # Resize originale image    
     image = Image.open(instance.image)
     image.thumbnail(IMG_MAX_SIZE)
 
-    # Save resized image under thumbnail_<original name> in the thumbnails directory
-    original_image_name = os.path.basename(instance.image.path)
-    thumbnail_path = os.path.join(instance.thumbnail.path,f'thumbnail_{original_image_name}')
-    instance.thumbnail = os.path.join(thumbnail_relative_path,f'thumbnail_{original_image_name}')
+    # Thumbnail name as thumbnail_<original name>
+    thumbnail_name = f'thumbnail_{original_image_name}'
+    thumbnail_path = thumbnail_absolute_path / thumbnail_name
+
     with open(thumbnail_path,'w'):
+        # Save resized image under thumbnail's path
         image.save(thumbnail_path)
+        # Assign resized image to instance's thumbnail
+        instance.thumbnail = os.path.join(instance.thumbnail.field.upload_to , thumbnail_name)
+
+def delete_file(path):
+    """ 
+        Delete the file of the given path and return True otherwise False
+    """
+
+    if os.path.isfile(path):
+        os.remove(path)
+        return True
+
+    return False

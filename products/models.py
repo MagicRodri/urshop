@@ -1,13 +1,11 @@
 
-from email.policy import default
-
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_delete, pre_save
 from django.urls import reverse
 
 from core.models import BaseModel
-from core.utils import thumbnail_image
+from core.utils import delete_file, thumbnail_image
 
 from .validators import product_quantity_validator
 
@@ -85,3 +83,12 @@ def image_pre_save(instance,sender,*args, **kwargs):
     thumbnail_image(instance)
 
 pre_save.connect(image_pre_save,sender = Image)
+
+def image_pre_delete(instance,sender,*args, **kwargs):
+
+    delete_file(instance.image.path)
+    if instance.thumbnail:
+        delete_file(instance.thumbnail.path)
+
+pre_delete.connect(image_pre_delete,sender = Image)
+    
