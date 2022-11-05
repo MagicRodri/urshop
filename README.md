@@ -46,6 +46,11 @@ docker-compose exec web python manage.py migrate
 ```
 
 ### Running outside docker
+### First create and activate virtual environment
+```bash
+python -m venv venv
+source venv/bin/activate
+```
 ```bash
 pip install -r requirements.txt
 psql -i -u postgres 
