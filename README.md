@@ -72,13 +72,10 @@ python manage.py runserver
 ### Payment system : Stripe.  
 
 ## Features to be addded
-- Products recommendation system based on user activity on the app  
-- Possibility to add products from another market place proving url  
-- Products rating by customers  
-- Feedback chat under products
-- Direct real time chat between users  
-- Other payment systems : yoomoney, paypal, PM
-- others
-- [x] Task 1
-- [ ] Task 2
-    
+- [ ] Products recommendation system based on user activity on the app  
+- [ ] Possibility to add products from another market place proving url  
+- [ ] Products rating by customers  
+- [ ] Feedback chat under products
+- [ ] Direct real time chat between users  
+- [ ] Other payment systems : yoomoney, paypal, PM
+- [ ] others  
