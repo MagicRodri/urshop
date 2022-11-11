@@ -1,1 +1,1 @@
-web : python manage.py makemigrations && python manage.py migrate && python manage.py loaddata data.json && gunicorn urshop.wsgi
+web : python manage.py makemigrations && python manage.py migrate && gunicorn urshop.wsgi
