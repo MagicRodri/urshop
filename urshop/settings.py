@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'urshop.urls'
 
 TEMPLATES = [
@@ -179,3 +180,8 @@ SESSION_FILE_PATH = None
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_KEY = os.environ.get('STRIPE_WEBHOOK_KEY')
+
+# Csrf config
+CSRF_TRUSTED_ORIGINS = [
+    'https://urshop-production.up.railway.app'
+]
