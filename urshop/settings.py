@@ -97,7 +97,7 @@ DATABASES = {
         'USER' : os.environ.get('DATABASE_USER'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
         'HOST' : os.environ.get('DATABASE_HOST'),
-        'POST' : int(os.environ.get('DATABASE_PORT')),
+        'PORT' : int(os.environ.get('DATABASE_PORT')),
         
         # db transaction for data safety
         'ATOMIC_REQUESTS':True,
