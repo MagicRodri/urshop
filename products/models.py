@@ -24,8 +24,8 @@ class Category(BaseModel):
         verbose_name_plural = 'Categories'  
 
     def save(self,*args, **kwargs):
-        if self.image:
-            thumbnail_image(self)
+        # if self.image:
+        #     thumbnail_image(self)
         # qs = Category.objects.filter(name__iexact = self.name ).exclude(pk = self.pk)
         # if qs.exists():
         #     return qs.first()
@@ -79,16 +79,16 @@ class Image(BaseModel):
 
 
 def image_pre_save(instance,sender,*args, **kwargs):
-    
-    thumbnail_image(instance)
+    ...
+    # thumbnail_image(instance)
 
 pre_save.connect(image_pre_save,sender = Image)
 
 def image_pre_delete(instance,sender,*args, **kwargs):
-
-    delete_file(instance.image.path)
-    if instance.thumbnail:
-        delete_file(instance.thumbnail.path)
+    ...
+    # delete_file(instance.image.path)
+    # if instance.thumbnail:
+    #     delete_file(instance.thumbnail.path)
 
 pre_delete.connect(image_pre_delete,sender = Image)
     
