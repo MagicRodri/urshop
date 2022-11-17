@@ -39,11 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+
+    'cloudinary_storage', # Cloudinary overrides collectstatic
+
     'django.contrib.staticfiles',
 
     #third party
     'crispy_forms',
     'crispy_bootstrap5',
+    'cloudinary',
 
     # project's apps
     'accounts',
@@ -154,6 +158,19 @@ STATICFILES_DIRS = [
 
 
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+# cloudinary config
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+    'MEDIA_TAG': 'urshop_media',
+    'STATIC_TAG': 'urshop_static',
+}
+if not DEBUG:
+    STATIC_URL = 'urshop_static/'
+    MEDIA_URL = 'urshop_media/'
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 
 # Override default django User model 
 AUTH_USER_MODEL = 'accounts.User'
