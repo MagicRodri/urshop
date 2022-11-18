@@ -49,8 +49,11 @@ class Cart(BaseModel):
 
     @property
     def total(self) -> float:
-        total = self.items.all().aggregate(total = Coalesce(models.Sum('product__price'),0.0,output_field=models.FloatField())) # a dict
-        return total['total']
+        total = 0
+        for item in self.items.all():
+            total += float(item.quantity * item.product.price)
+
+        return round(float(total),2)
 
 class CartItem(BaseModel):
 
@@ -67,6 +70,9 @@ class CartItem(BaseModel):
 
     def decrement(self,n=1):
         self.quantity -= n
+        if self.quantity <= 0:
+            self.delete()
+            return
         self.save()
 
     @property
