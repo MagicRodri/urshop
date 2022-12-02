@@ -48,9 +48,11 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'cloudinary',
+    'rest_framework',
 
     # project's apps
     'accounts',
+    'api',
     'core',
     'products',
     'carts',

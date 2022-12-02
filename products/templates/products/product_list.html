@@ -8,73 +8,128 @@
 
 {% block content %}
   <section style="background-color: #eee;">
-      {% for product in products %}
-      <article class="container-fluid p-3">
-          <div class="row justify-content-center mb-2">
-            <div class="col-md-12 col-xl-10">
-              <div class="card shadow-0 border rounded-3">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
-                      <div class="bg-image hover-zoom ripple rounded ripple-surface">
-                        <img src={{ product.images.all.first.image.url }} class="w-100" />
-                        <a href="#!">
-                          <div class="hover-overlay">
-                            <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
-                          </div>
-                        </a>
-                      </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-6">
-                      <h5>{{product.name}}</h5>
-                      <div class="d-flex flex-row">
-                        <div class="text-danger mb-1 me-2">
-                          <i class="fa fa-star"></i>
-                          <i class="fa fa-star"></i>
-                          <i class="fa fa-star"></i>
-                          <i class="fa fa-star"></i>
+    <div class="row flex-nowrap justify-content-space-between">
+
+      <div class="col-md-3">
+        <div class="container-fluid p-2">
+            <p>Filter sidebar here!!</p>
+            <div class="h-100">
+              <div class="d-grid">
+                <button class=" btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#categoryChoices" aria-expanded="false" aria-controls="categoryChoices">
+                  Categories 
+                </button>
+              </div>
+              
+              <div class="collaspe" id="categoryChoices">
+                <div class="list-group d-flex flex-column ">
+                  
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class='col-md-9'>
+        {% for product in products %}
+        <article class="container-fluid p-2">
+            <div class="row justify-content-center mb-2">
+              <div class="col-md-12 col-xl-10">
+                <div class="card shadow-0 border rounded-3">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                        <div class="bg-image hover-zoom ripple rounded ripple-surface">
+                          <img src={{ product.images.all.first.image.url }} class="w-100" />
+                          <a href="#!">
+                            <div class="hover-overlay">
+                              <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
+                            </div>
+                          </a>
                         </div>
-                        <span>310</span>
                       </div>
-                      <div class="mt-1 mb-0 text-muted small">
-                        <span>100% cotton</span>
-                        <span class="text-primary"> • </span>
-                        <span>Light weight</span>
-                        <span class="text-primary"> • </span>
-                        <span>Best finish<br /></span>
+                      <div class="col-md-6 col-lg-6 col-xl-6">
+                        <h5>{{product.name}}</h5>
+                        <div class="d-flex flex-row">
+                          <div class="text-danger mb-1 me-2">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                          </div>
+                          <span>310</span>
+                        </div>
+                        <div class="mt-1 mb-0 text-muted small">
+                          <span>100% cotton</span>
+                          <span class="text-primary"> • </span>
+                          <span>Light weight</span>
+                          <span class="text-primary"> • </span>
+                          <span>Best finish<br /></span>
+                        </div>
+                        <div class="mb-2 text-muted small">
+                          <span>Unique design</span>
+                          <span class="text-primary"> • </span>
+                          <span>For men</span>
+                          <span class="text-primary"> • </span>
+                          <span>Casual<br /></span>
+                        </div>
+                        <p class="text-truncate mb-4 mb-md-0">
+                          {{product.description}}
+                        </p>
                       </div>
-                      <div class="mb-2 text-muted small">
-                        <span>Unique design</span>
-                        <span class="text-primary"> • </span>
-                        <span>For men</span>
-                        <span class="text-primary"> • </span>
-                        <span>Casual<br /></span>
-                      </div>
-                      <p class="text-truncate mb-4 mb-md-0">
-                        {{product.description}}
-                      </p>
-                    </div>
-                    <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
-                      <div class="d-flex flex-row align-items-center mb-1">
-                        <h4 class="mb-1 me-1">${{product.price}}</h4>
-                        {% if product.old_price %}
-                          <span class="text-danger"><s>${{product.old_price}}</s></span>
-                        {% endif %}
-                      </div>
-                      <h6 class="text-success">Free shipping</h6>
-                      <div class="d-flex flex-column mt-4">
-                        <a href={{product.get_absolute_url}} class="btn btn-primary btn-sm">Details</a>
-                        <a href={% url 'carts:add' product.slug %} class="btn btn-outline-primary btn-sm mt-2">
-                          Add to cart
-                        </a>
+                      <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+                        <div class="d-flex flex-row align-items-center mb-1">
+                          <h4 class="mb-1 me-1">${{product.price}}</h4>
+                          {% if product.old_price %}
+                            <span class="text-danger"><s>${{product.old_price}}</s></span>
+                          {% endif %}
+                        </div>
+                        <h6 class="text-success">Free shipping</h6>
+                        <div class="d-flex flex-column mt-4">
+                          <a href={{product.get_absolute_url}} class="btn btn-primary btn-sm">Details</a>
+                          <a href={% url 'carts:add' product.slug %} class="btn btn-outline-primary btn-sm mt-2">
+                            Add to cart
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-      </article>
-      {% endfor %}
+        </article>
+        {% endfor %}
+      </div>
+    </div>
   </section>
 {% endblock content %}
+
+{% block js %}
+  <script>
+    const categoryChoicesDiv = document.getElementById('categoryChoices');
+    const categoriesList = categoryChoicesDiv.querySelector('.list-group');
+
+    const category_list_url = 'http://127.0.0.1:8000/api/v1/products/category/';
+    fetch(category_list_url)
+    .then( (response) => {
+      if(!response.ok){
+        throw new Error(`Http error : ${response.status}`)
+      }
+      return response.json();
+    })
+    .then((json) => {
+      console.log(typeof(json));
+      for (const category of json) {
+        const label = document.createElement('label');
+        label.setAttribute('class','list-group-item');
+        label.innerHTML =  `<input class="form-check-input me-1" type="checkbox" value="">
+                            ${category.name}`;
+        
+                    
+         
+        categoriesList.appendChild(label);
+        console.log(category.name);      
+      }
+    })
+
+  </script>
+{% endblock js %}
