@@ -11,49 +11,55 @@ from core.utils import get_user_id
 # Create your models here.
 User = get_user_model()
 
-class Address(BaseModel):
 
+class Address(BaseModel):
 
     BILLING = 'BILLING'
     SHIPPING = 'SHIPPING'
 
     ADDRESS_TYPES = (
-    (BILLING, 'Billing address'),
-    (SHIPPING, 'Shipping address'),
+        (BILLING, 'Billing address'),
+        (SHIPPING, 'Shipping address'),
     )
 
-    user = models.ForeignKey(User, on_delete = models.CASCADE , blank = True , null = True)
-    name = models.CharField(max_length = 128, blank = True)
-    address_type = models.CharField(max_length = 16, default = BILLING, choices = ADDRESS_TYPES)
-    address_line_1 = models.CharField(max_length = 128)
-    address_line_2 = models.CharField(max_length = 128, blank = True)
-    country = models.CharField(max_length = 128)
-    state = models.CharField(max_length = 128,blank = True)
-    city = models.CharField(max_length = 128)
-    zip = models.CharField(max_length = 128)
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                             blank=True,
+                             null=True)
+    address_type = models.CharField(max_length=16,
+                                    default=BILLING,
+                                    choices=ADDRESS_TYPES)
+    address_line_1 = models.CharField(max_length=128)
+    address_line_2 = models.CharField(max_length=128, blank=True)
+    country = models.CharField(max_length=128)
+    state = models.CharField(max_length=128, blank=True)
+    city = models.CharField(max_length=128)
+    zip = models.CharField(max_length=128)
 
     class Meta:
         verbose_name_plural = 'Addresses'
 
+
 class OrderManager(models.Manager):
 
-    def get_or_new(self,request : HttpRequest = None):
-
+    def get_or_new(self, request: HttpRequest = None):
         """
             Get or create a new order object based on request
         """
 
         if request.user.is_authenticated:
-            return self.model.objects.get_or_create(user = request.user)
+            return self.model.objects.get_or_create(user=request.user)
         else:
-            return self.model.objects.get_or_create(cart_id = get_user_id(request))
+            return self.model.objects.get_or_create(
+                cart_id=get_user_id(request))
+
 
 class Order(BaseModel):
 
     CREATED = 'CREATED'
     PAID = 'PAID'
     SHIPPED = 'SHIPPED'
-    CANCELED = 'CANCELED' 
+    CANCELED = 'CANCELED'
 
     ORDER_STATUS = (
         (CREATED, 'Created'),
@@ -61,12 +67,19 @@ class Order(BaseModel):
         (SHIPPED, 'Shipped'),
         (CANCELED, 'Canceled'),
     )
-    user = models.ForeignKey(User, on_delete = models.CASCADE, blank = True , null = True )
-    order_id = models.CharField(max_length = 128, blank = True)
-    address = models.ForeignKey(Address, on_delete = models.CASCADE)
-    cart = models.ForeignKey(Cart, on_delete = models.CASCADE)
-    shipping_total = models.DecimalField(default = 0.00, decimal_places = 2, max_digits = 10)
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                             blank=True,
+                             null=True)
+    order_id = models.CharField(max_length=128, blank=True)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    shipping_total = models.DecimalField(default=0.00,
+                                         decimal_places=2,
+                                         max_digits=10)
     # payment_type = models.CharField(max_lenght = 16,)
-    status = models.CharField(max_length = 16, default = CREATED ,choices = ORDER_STATUS)
+    status = models.CharField(max_length=16,
+                              default=CREATED,
+                              choices=ORDER_STATUS)
 
     objects = OrderManager()

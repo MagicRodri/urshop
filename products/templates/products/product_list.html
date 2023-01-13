@@ -12,20 +12,47 @@
 
       <div class="col-md-3">
         <div class="container-fluid p-2">
-            <p>Filter sidebar here!!</p>
-            <div class="h-100">
-              <div class="d-grid">
-                <button class=" btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#categoryChoices" aria-expanded="false" aria-controls="categoryChoices">
-                  Categories 
-                </button>
-              </div>
-              
-              <div class="collaspe" id="categoryChoices">
-                <div class="list-group d-flex flex-column ">
-                  
+            <form action="." method="get" class="filter">
+              <div class="pb-2">
+
+                <div class="d-grid">
+                  <button class=" btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#categoryChoices" aria-expanded="false" aria-controls="categoryChoices">
+                    Categories 
+                  </button>
+                </div>
+                
+                <div class="collaspe" id="categoryChoices">
+                  <div class="list-group d-flex flex-column ">
+                    {% for category in categories %}
+                      <label class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" value={{category.slug}}>
+                              {{category.name}}
+                      </label>
+                    {% endfor %}
+                  </div>
                 </div>
               </div>
-            </div>
+
+              <div class="h-100">
+
+                <div class="d-grid">
+                  <button class=" btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#brandChoices" aria-expanded="false" aria-controls="brandChoices">
+                    Brands 
+                  </button>
+                </div>
+                
+                <div class="collaspe" id="brandChoices">
+                  <div class="list-group d-flex flex-column ">
+                    {% for brand in brands %}
+                      <label class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" value={{brand.name}}>
+                              {{brand.name}}
+                      </label>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </form>
         </div>
       </div>
 
@@ -104,32 +131,52 @@
 {% endblock content %}
 
 {% block js %}
+
   <script>
-    const categoryChoicesDiv = document.getElementById('categoryChoices');
-    const categoriesList = categoryChoicesDiv.querySelector('.list-group');
+    // const categoryChoicesDiv = document.getElementById('categoryChoices');
+    // const categoriesList = categoryChoicesDiv.querySelector('.list-group');
 
-    const category_list_url = 'http://127.0.0.1:8000/api/v1/products/category/';
-    fetch(category_list_url)
-    .then( (response) => {
-      if(!response.ok){
-        throw new Error(`Http error : ${response.status}`)
-      }
-      return response.json();
-    })
-    .then((json) => {
-      console.log(typeof(json));
-      for (const category of json) {
-        const label = document.createElement('label');
-        label.setAttribute('class','list-group-item');
-        label.innerHTML =  `<input class="form-check-input me-1" type="checkbox" value="">
-                            ${category.name}`;
+    // const category_list_url = 'http://127.0.0.1:8000/api/v1/products/category/';
+    // fetch(category_list_url)
+    // .then( (response) => {
+    //   if(!response.ok){
+    //     throw new Error(`Http error : ${response.status}`)
+    //   }
+    //   return response.json();
+    // })
+    // .then((json) => {
+    //   for (const category of json) {
+    //     const label = document.createElement('label');
+    //     label.setAttribute('class','list-group-item');
+    //     label.innerHTML =  `<input class="form-check-input me-1" type="checkbox" value="">
+    //                         ${category.name}`;
         
-                    
-         
-        categoriesList.appendChild(label);
-        console.log(category.name);      
-      }
-    })
+    //     categoriesList.appendChild(label);    
+    //   }
+    // })
+    // .catch((error) => {
+    //   console.error(`Something went wrong : ${error}`);
+    // })
+      const filterForm = document.querySelector('.filter');
+    
+      filterForm.addEventListener('change',function(e){
+        const categoryChoices = filterForm.querySelector('#categoryChoices');
+        const brandChoices = filterForm.querySelector('#brandChoices');
+        const categoryChoicesValues = getInputValues(categoryChoices);
+        const brandChoicesValues = getInputValues(brandChoices);
+        console.log(categoryChoicesValues.join(" "));
+        console.log(brandChoicesValues);
+      })
 
+      function getInputValues(inputWrapper){
+        const inputs = inputWrapper.querySelectorAll('input');
+        let ChoicesValues = [];
+        for (const input of inputs) {
+          if (input.checked){
+            ChoicesValues.push(input.value);
+          }
+        }
+        return ChoicesValues;
+      }
   </script>
 {% endblock js %}

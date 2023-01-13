@@ -1,4 +1,3 @@
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -9,20 +8,21 @@ from carts.models import Cart
 from core.utils import get_user_id
 
 from .forms import AddressForm
-from .models import Address, Order
+from .models import Order
 
 # Create your views here.
 
+
 @login_required()
-def order_create(request : HttpRequest):
+def order_create(request: HttpRequest):
 
     address_form = AddressForm()
-    cart , _ = Cart.objects.get_or_new(request)
+    cart, _ = Cart.objects.get_or_new(request)
     context = {
-        'address_form' : address_form,
-        'cart' : cart,
-        'items' : cart.items.all(),
-        'STRIPE_PUBLIC_KEY' : settings.STRIPE_PUBLIC_KEY
+        'address_form': address_form,
+        'cart': cart,
+        'items': cart.items.all(),
+        'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY
     }
 
     if request.method == 'POST':
@@ -31,19 +31,18 @@ def order_create(request : HttpRequest):
 
         if address_form.is_valid():
 
-            address = address_form.save()
+            address = address_form.save(commit=False)
+            address.user = request.user
+            address.save()
 
-            order = Order.objects.create(
-                address = address,
-                cart = cart
-            )
+            order = Order.objects.create(address=address, cart=cart)
 
             if request.user.is_authenticated:
                 order.user = request.user
                 order.save()
-            
+
             return JsonResponse({
-                'success' : True,
+                'success': True,
             })
 
-    return render(request,'orders/order_create.html', context = context)
+    return render(request, 'orders/order_create.html', context=context)

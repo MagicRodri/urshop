@@ -1,8 +1,6 @@
-
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save, pre_save
 from django.http import HttpRequest
 
@@ -13,39 +11,46 @@ from products.models import Product
 # Create your models here.
 
 User = get_user_model()
-    
+
 
 class CartQuerySet(models.QuerySet):
+
     def active(self):
-        return self.filter(is_active = True)
-    
+        return self.filter(is_active=True)
+
+
 class CartManager(models.Manager):
 
     def get_queryset(self):
-        return CartQuerySet(model=self.model,using=self.db)
-    
-    def get_or_new(self,request : HttpRequest = None):
+        return CartQuerySet(model=self.model, using=self.db)
 
+    def get_or_new(self, request: HttpRequest = None):
         """
             Get or create a new cart object based on request
         """
 
         if request.user.is_authenticated:
-            return self.get_queryset().active().get_or_create(user = request.user)
+            return self.get_queryset().active().get_or_create(
+                user=request.user)
         else:
-            return self.get_queryset().active().get_or_create(cart_id = get_user_id(request))
+            return self.get_queryset().active().get_or_create(
+                cart_id=get_user_id(request))
+
 
 class Cart(BaseModel):
 
-
-    cart_id = models.CharField(max_length=128,blank = True)
-    user = models.ForeignKey(User,blank=True,null = True,on_delete = models.CASCADE)
+    cart_id = models.CharField(max_length=128, blank=True)
+    user = models.ForeignKey(User,
+                             blank=True,
+                             null=True,
+                             on_delete=models.CASCADE)
 
     objects = CartManager()
+
     def __str__(self) -> str:
         if self.user:
             return str(self.user)
-        return self.cart_id    
+        return self.cart_id
 
     @property
     def total(self) -> float:
@@ -53,22 +58,25 @@ class Cart(BaseModel):
         for item in self.items.all():
             total += float(item.quantity * item.product.price)
 
-        return round(float(total),2)
+        return round(float(total), 2)
+
 
 class CartItem(BaseModel):
 
-    cart = models.ForeignKey(Cart,related_name = 'items',on_delete = models.CASCADE)
-    product = models.ForeignKey(Product,on_delete = models.CASCADE)
+    cart = models.ForeignKey(Cart,
+                             related_name='items',
+                             on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
 
     def __str__(self) -> str:
         return f'{self.product}:{self.quantity}'
 
-    def increment(self,n=1):
+    def increment(self, n=1):
         self.quantity += n
         self.save()
 
-    def decrement(self,n=1):
+    def decrement(self, n=1):
         self.quantity -= n
         if self.quantity <= 0:
             self.delete()
@@ -94,26 +102,32 @@ class CartItem(BaseModel):
         prod_quantity = self.product.quantity
         quantity = self.quantity
         if quantity > prod_quantity:
-            raise ValidationError(f'Item quantity ({quantity}) can not be more than available product quantity({prod_quantity})')
-    
-    def save(self,*args, **kwargs):
+            raise ValidationError(
+                f'Item quantity ({quantity}) can not be more than available product quantity({prod_quantity})'
+            )
+
+    def save(self, *args, **kwargs):
         self._validate_item_quantity()
         return super().save(*args, **kwargs)
 
 
-def cart_item_pre_save(instance,sender,*args, **kwargs):
-    qs = CartItem.objects.filter(cart = instance.cart, product = instance.product).exclude(id = instance.id)
+def cart_item_pre_save(instance, sender, *args, **kwargs):
+    qs = CartItem.objects.filter(
+        cart=instance.cart, product=instance.product).exclude(id=instance.id)
     if qs.count() == 1:
         existing_item = qs.first()
         existing_item.increment(instance.quantity)
 
-pre_save.connect(cart_item_pre_save,sender = CartItem)
+
+pre_save.connect(cart_item_pre_save, sender=CartItem)
 
 
-def cart_item_post_save(instance, sender,created,*args, **kwargs):
+def cart_item_post_save(instance, sender, created, *args, **kwargs):
 
-    qs = CartItem.objects.filter(cart = instance.cart,product=instance.product).exclude(id = instance.id)
+    qs = CartItem.objects.filter(
+        cart=instance.cart, product=instance.product).exclude(id=instance.id)
     if qs.count() == 1:
         instance.delete()
-        
-post_save.connect(cart_item_post_save, sender = CartItem) 
+
+
+post_save.connect(cart_item_post_save, sender=CartItem)

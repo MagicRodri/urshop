@@ -8,59 +8,54 @@ from django.views.decorators.csrf import csrf_exempt
 from carts.models import Cart
 from orders.models import Order
 
+from .models import StripePayment
+
 # This is your test secret API key.
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-
 
 YOUR_DOMAIN = 'http://127.0.0.1:8000'
 
 
 def payments_success(request):
 
-    return render(request,'payments/payment_success.html')
+    return render(request, 'payments/payment_success.html')
+
 
 def payments_cancel(request):
 
-    return render(request,'payments/payment_cancel.html')
+    return render(request, 'payments/payment_cancel.html')
 
 
-def create_checkout_session(request : HttpRequest, pk : int):
+def create_checkout_session(request: HttpRequest, pk: int):
 
     if request.method == 'POST':
-        cart = get_object_or_404(Cart.objects.prefetch_related('items'), pk = pk)
+        cart = get_object_or_404(Cart.objects.prefetch_related('items'), pk=pk)
         order = cart.order_set.first()
         items = []
         for item in cart.items.all():
-            items.append(
-                {
-                    'price_data': {
-                        'currency' : 'usd',
-                        'unit_amount' : int(item.price * 100),
-                        'product_data' : {
-                            'name' : item.name
-                            # 'images' : []
-                        }
-                    },
-                    'quantity': item.quantity,
-                }
-            )
+            items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': int(item.price * 100),
+                    'product_data': {
+                        'name': item.name
+                        # 'images' : []
+                    }
+                },
+                'quantity': item.quantity,
+            })
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=items,
-            metadata = {
-                'order_pk' : order.pk 
-            },
+            metadata={'order_pk': order.pk},
             mode='payment',
             success_url=YOUR_DOMAIN + reverse('payments:success'),
             cancel_url=YOUR_DOMAIN + reverse('payments:cancel'),
         )
-        return JsonResponse({
-            'id' : checkout_session.id
-        })
-            
-    return redirect(checkout_session.url)
+        return JsonResponse({'id': checkout_session.id})
 
+    return redirect(checkout_session.url)
 
 
 @csrf_exempt
@@ -73,32 +68,34 @@ def stripe_webhook(request):
     event = None
 
     try:
-        event = stripe.Webhook.construct_event(
-            payload,sig_header,settings.STRIPE_WEBHOOK_KEY
-        )
+        event = stripe.Webhook.construct_event(payload, sig_header,
+                                               settings.STRIPE_WEBHOOK_KEY)
     except ValueError as e:
-
         # Invalid payload
-        return HttpResponse(status = 400)
-
+        return HttpResponse(status=400)
     except stripe.error.SignatureVerification as e:
         # Invalid signature
         return HttpResponse(status=400)
 
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        print(session)
         order_pk = session['metadata']['order_pk']
-        order = get_object_or_404(Order, pk = order_pk)
+        order = get_object_or_404(Order, pk=order_pk)
         # change order status to paid
         order.status = Order.PAID
         order.save()
         cart = order.cart
         cart.is_active = False
         cart.save()
-
-
-
-    # Fulfill the purchase...
+        # Save the payment instance to db
+        payment_dict = {
+            'amount_total': session['amount_total'],
+            'currency': session['currency'],
+            'method': session['payment_method_types'][0],
+            'stripe_charge_id': session['id'],
+            'intent_id': session['payment_intent'],
+            'status': session['payment_status'],
+        }
+        StripePayment.objects.create(order=order, **payment_dict)
 
     return HttpResponse(status=200)

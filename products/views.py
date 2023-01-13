@@ -6,7 +6,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import BrandForm, ImageForm, ProductForm
-from .models import Product
+from .models import Brand, Category, Product
 
 # Create your views here.
 
@@ -73,5 +73,12 @@ def product_delete(request: HttpRequest,slug : str) -> HttpResponse:
 def product_list(request: HttpRequest) -> HttpResponse:
 
     products = Product.objects.all()
+    categories = Category.objects.all()
+    brands = Brand.objects.all()
 
-    return render(request,template_name='products/product_list.html',context={'products' : products})
+    context = {
+        'products' : products,
+        'categories' : categories,
+        'brands' : brands
+    }
+    return render(request,template_name='products/product_list.html',context=context)

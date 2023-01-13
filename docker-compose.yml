@@ -5,7 +5,7 @@ services:
     image: stripe/stripe-cli:latest
     container_name: stripe-cli
     network_mode: host # localhost in stripe container now is the same as host localhost
-    command: "listen --api-key ${STRIPE_API_KEY} --device-name ${STRIPE_DEVICE_NAME} --forward-to localhost:8000/payments/webhooks/stripe/"
+    command: "listen --api-key ${STRIPE_SECRET_KEY} --device-name ${STRIPE_DEVICE_NAME} --forward-to localhost:8000/payments/webhooks/stripe/"
     env_file:
       - .env
   web:
