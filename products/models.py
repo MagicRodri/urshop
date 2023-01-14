@@ -5,7 +5,7 @@ from django.db.models.signals import pre_delete, pre_save
 from django.urls import reverse
 
 from core.models import BaseModel
-from core.utils import delete_file, thumbnail_image
+from core.utils import delete_file, reverse_querystring, thumbnail_image
 
 # Create your models here.
 
@@ -22,6 +22,13 @@ class Category(BaseModel):
 
     class Meta:
         verbose_name_plural = 'Categories'
+    
+    def __str__(self) -> str:
+        return self.name
+
+    # def get_absolute_url(self):
+    #     return reverse_querystring("products:list",query_kwargs={'category': self.slug})
+    
 
     def save(self, *args, **kwargs):
         # if self.image:
@@ -31,8 +38,6 @@ class Category(BaseModel):
         #     return qs.first()
         super().save(*args, **kwargs)
 
-    # def __str__(self) -> str:
-    #     return self.name
 
 
 class Brand(BaseModel):
