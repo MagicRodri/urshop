@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Product,Category,Brand,Image
-from .forms import BrandForm
+from .models import Brand, Category, Image, Product
+
 # Register your models here.
 
 class BrandAdmin(admin.ModelAdmin):

@@ -1,0 +1,29 @@
+<div class="filter-widget">
+    <div
+        class="filter-header faq-heading heading_18 d-flex align-items-center border-bottom">
+        Related products
+    </div>
+    <div class="filter-related">
+      {% for product in products %}
+          <div class="related-item d-flex">
+              <div class="related-img-wrapper">
+                  <img class="related-img" src="{{product.images.first.image.url}}"
+                      alt={{product.name}}>
+              </div>
+              <div class="related-product-info">
+                  <h2 class="related-heading heading_18">
+                      <a href="product.html">{{product.name}}</a>
+                  </h2>
+                  <div
+                      class="related-review-icon product-icon-star d-flex align-items-center">
+                      <img src={% static 'images/icon/star.png' %} alt="img">
+                      <img src={% static 'images/icon/star.png' %} alt="img">
+                      <img src={% static 'images/icon/star.png' %} alt="img">
+                      <img src={% static 'images/icon/star.png' %} alt="img">
+                      <img src={% static 'images/icon/star.png' %} alt="img">
+                  </div>
+                  <p class="related-price text_16">${{product.price}}</p>
+              </div>
+          </div>
+      {% endfor %}
+  </div>

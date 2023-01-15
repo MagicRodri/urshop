@@ -104,3 +104,10 @@ def reverse_querystring(*args, query_kwargs=None, **kwargs):
         querystring = urlencode(query_kwargs)
         url = f"{url}?{querystring}"
     return url
+
+def resize_image(image, size=(800,800)):
+    """
+        Resize the given image to the given size
+    """
+    image.thumbnail(size)
+    return image

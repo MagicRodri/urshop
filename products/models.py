@@ -79,6 +79,9 @@ class Product(BaseModel):
 
     def __str__(self) -> str:
         return self.name
+    
+    def preview(self):
+        return self.images.first().image.url
 
     def get_absolute_url(self):
         return reverse("products:detail", kwargs={"slug": self.slug})
@@ -93,10 +96,7 @@ class Image(BaseModel):
                                 on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        if self.title:
-            return self.title
-        return super().__str__()
-
+        return self.product.name
 
 def image_pre_save(instance, sender, *args, **kwargs):
     ...
