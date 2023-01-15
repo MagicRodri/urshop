@@ -7,8 +7,6 @@ from products.models import Product
 
 from .models import Cart, CartItem
 
-# Create your views here.
-
 
 def cart_add(request:HttpRequest,product_slug : str):
 
@@ -38,12 +36,6 @@ def cart_remove(request:HttpRequest,item_pk : int):
     item = get_object_or_404(CartItem, pk=item_pk)
     item.delete()
     return redirect(reverse('carts:detail'))
+
 def cart_detail(request):
-
-    cart , _ = Cart.objects.get_or_new(request)
-
-    context = {
-        'cart' : cart,
-        'items' : cart.items.all()
-    }
-    return render(request,'carts/cart_detail.html',context=context)
+    return render(request,'carts/cart_detail.html')

@@ -1,141 +1,85 @@
 {% extends '_base.html' %}
-
+{% load static %}
+{% block title %}Cart{% endblock title %}
 
 {% block content %}
-    <article>
-        <div class="container py-5 h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-              <div class="col-12">
-                <div class="card card-registration card-registration-2" style="border-radius: 15px;">
-                  <div class="card-body p-0">
-                    <div class="row g-0">
-                      <div class="col-lg-8">
-                        <div class="p-5">
-                          <div class="d-flex justify-content-between align-items-center mb-5">
-                            <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
-                            <h6 class="mb-0 text-muted">3 items</h6>
-                          </div>
-      
-                          <hr class="my-4">
-                          {% for item in items %}
-                              <div class="row mb-4 d-flex justify-content-between align-items-center">
-                                  <div class="col-md-2 col-lg-2 col-xl-2">
-                                  <img
-                                      src={{item.product.images.first.image.url}}
-                                      class="img-fluid rounded-3" alt="Cotton T-shirt">
-                                  </div>
-                                  <div class="col-md-3 col-lg-3 col-xl-3">
-                                  <h6 class="text-muted">{{item.product.brand}}</h6>
-                                  <h6 class="text-black mb-0">{{item.name}}</h6>
-                                  </div>
-                                  <form class="col-md-3 col-lg-3 col-xl-3 d-flex">
-                                    <a href={% url 'carts:decrement' item.product.slug %} class="minus btn btn-link px-2">
-                                        <i class="fas fa-minus"></i>
-                                    </a>
-                
-                                    <input id="form-{{item.pk}}" min="0" name="quantity" value={{item.quantity}} type="number"
-                                        class="form-control form-control-sm" />
-                
-                                    <a href={% url 'carts:add' item.product.slug %} class="plus btn btn-link px-2">
-                                        <i class="fas fa-plus"></i>
-                                    </a>
-                                  </form>
-                                  <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                  <h6 class="mb-0">${{item.total}}</h6>
-                                  </div>
-                                  <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                  <a href={% url 'carts:remove' item.pk %} class="text-muted"><i class="fas fa-times"></i></a>
-                                  </div>
+<div class="cart-page mt-100">
+  <div class="container">
+      <div class="cart-page-wrapper">
+          <div class="row">
+              <div class="col-lg-7 col-md-12 col-12">
+                  <table class="cart-table w-100">
+                      <thead>
+                        <tr>
+                          <th class="cart-caption heading_18">Product</th>
+                          <th class="cart-caption heading_18"></th>
+                          <th class="cart-caption text-center heading_18 d-none d-md-table-cell">Quantity</th>
+                          <th class="cart-caption text-end heading_18">Price</th>
+                        </tr>
+                      </thead>
+          
+                      <tbody>
+                        {% for item in cart_items  %}
+                          <tr class="cart-item">
+                            <td class="cart-item-media">
+                              <div class="mini-img-wrapper">
+                                  <img class="mini-img" src={{item.preview}} alt="img">
+                              </div>                                    
+                            </td>
+                            <td class="cart-item-details">
+                              <h2 class="product-title"><a href="cart.html#">{{item.name}}</a></h2>
+                              <p class="product-vendor">XS / Dove Gray</p>                                   
+                            </td>
+                            <td class="cart-item-quantity">
+                              <div class="quantity d-flex align-items-center justify-content-between">
+                                  <button class="qty-btn dec-qty"><img src={% static 'images/icon/minus.svg' %}
+                                          alt="minus"></button>
+                                  <input class="qty-input" type="number" name="qty" value="1" min="0">
+                                  <button class="qty-btn inc-qty"><img src={% static 'images/icon/plus.svg' %}
+                                          alt="plus"></button>
                               </div>
-              
-                              <hr class="my-4"> 
-                          {% endfor %}
-                          <div class="pt-5">
-                            <h6 class="mb-0"><a href="#!" class="text-body"><i
-                                  class="fas fa-long-arrow-alt-left me-2"></i>Back to shop</a></h6>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-lg-4 bg-grey">
-                        <div class="p-5">
-                          <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
-                          <hr class="my-4">
-        
-                          <div class="d-flex justify-content-between mb-4">
-                            <h5 class="text-uppercase">3 items</h5>
-                            <h5>$ {{cart.total}}</h5>
-                          </div>
-        
-                          <h5 class="text-uppercase mb-3">Shipping</h5>
-        
-                          <div class="mb-4 pb-2">
-                            <select class="select">
-                              <option value="1">Standard-Delivery- €5.00</option>
-                              <option value="2">Two</option>
-                              <option value="3">Three</option>
-                              <option value="4">Four</option>
-                            </select>
-                          </div>
-        
-                          <h5 class="text-uppercase mb-3">Give code</h5>
-        
-                          <div class="mb-5">
-                            <div class="form-outline">
-                              <input type="text" id="form3Examplea2" class="form-control form-control-lg" />
-                              <label class="form-label" for="form3Examplea2">Enter your code</label>
-                            </div>
-                          </div>
-        
-                          <hr class="my-4">
-        
-                          <div class="d-flex justify-content-between mb-5">
-                            <h5 class="text-uppercase">Total price</h5>
-                            <h5>$ {{cart.total}}</h5>
-                          </div>
-        
-                          <a href={% url 'orders:create' %} class="btn btn-dark btn-block btn-lg"
-                            data-mdb-ripple-color="dark">Proceed to checkout</a>
-        
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                              <a href="cart.html#" class="product-remove mt-2">Remove</a>                           
+                            </td>
+                            <td class="cart-item-price text-end">
+                              <div class="product-price">${{item.price}}</div>                           
+                            </td>                        
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
               </div>
-            </div>
+              <div class="col-lg-5 col-md-12 col-12">
+                  <div class="cart-total-area">
+                      <h3 class="cart-total-title d-none d-lg-block mb-0">Cart Totals</h4>
+                      <div class="cart-total-box mt-4">
+                          <div class="subtotal-item subtotal-box">
+                              <h4 class="subtotal-title">Subtotals:</h4>
+                              <p class="subtotal-value">$465.00</p>
+                          </div>
+                          <div class="subtotal-item shipping-box">
+                              <h4 class="subtotal-title">Shipping:</h4>
+                              <p class="subtotal-value">$10.00</p>
+                          </div>
+                          <div class="subtotal-item discount-box">
+                              <h4 class="subtotal-title">Discount:</h4>
+                              <p class="subtotal-value">$100.00</p>
+                          </div>
+                          <hr />
+                          <div class="subtotal-item discount-box">
+                              <h4 class="subtotal-title">Total:</h4>
+                              <p class="subtotal-value">$1000.00</p>
+                          </div>
+                          <p class="shipping_text">Shipping & taxes calculated at checkout</p>
+                          <div class="d-flex justify-content-center mt-4">
+                              <a href="checkout.html" class="position-relative btn-primary text-uppercase">
+                                  Procced to checkout
+                              </a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
           </div>
-    </article>
+      </div>
+  </div>
+</div>
 {% endblock content %}
-
-{% block js %}
-    <script>
-      // const minusBtn = document.querySelectorAll('.minus');
-      // const plusBtn = document.querySelectorAll('.plus');
-      // const quantityForms = document.querySelectorAll('input[type=number]');
-
-
-      // for (const quantityForm of quantityForms) {
-      //   quantityForm.addEventListener('change', function(e){
-
-      //   })
-      // }
-
-      // for (const btn of minusBtn) {
-      //   btn.addEventListener('click',function (e) {
-      //     e.preventDefault();
-      //     quantityInput = btn.parentNode.querySelector('input').stepDown();
-      //   })
-      // }
-
-      // for (const btn of plusBtn) {
-      //   btn.addEventListener('click',function (e) {
-      //     e.preventDefault();
-      //     quantityInput = btn.parentNode.querySelector('input').stepUp();
-      //   })
-      // }
-      
-      // function update_total() {
-        
-      // }
-    </script>
-{% endblock js %}

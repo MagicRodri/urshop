@@ -84,6 +84,10 @@ class CartItem(BaseModel):
         self.save()
 
     @property
+    def preview(self) -> str:
+        return self.product.preview()
+
+    @property
     def name(self) -> str:
         return self.product.name
 
