@@ -1,7 +1,7 @@
 
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
 User = get_user_model()
 
@@ -18,6 +18,13 @@ class SignUpForm(UserCreationForm):
         fields = ['username','first_name','last_name','email']
 
 class PpUploadForm(forms.ModelForm):
+
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.fields['picture'].widget = forms.FileInput(
+            attrs={'class':'form-control-file','value':''},
+            )
+            
     class Meta:
         model = User
         fields = ['picture']

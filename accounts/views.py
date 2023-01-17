@@ -1,58 +1,56 @@
 
 from django.contrib.auth import get_user_model, login, logout
-from django.db.models.query import prefetch_related_objects
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.views import LoginView
+from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.views.generic import UpdateView
 
 from carts.models import Cart
 
 from .forms import EditProfileForm, LoginForm, PpUploadForm, SignUpForm
 
-# Create your views here.
-
 User = get_user_model()
 
-def login_view(request):
+class UserLoginView(LoginView):
+    form_class = LoginForm
+    template_name = 'accounts/login.html'
 
-    form = LoginForm(request)
-    message = ""
-    if request.method == 'POST':
-        form = LoginForm(request,data=request.POST)
-        if form.is_valid():
-            
-            # Grab the session cart and assign it to the user
-            guess_cart, _ = Cart.objects.get_or_new(request)
+    def get_success_url(self):
+        return reverse('home')
+    
+    def form_valid(self, form):
+        # Grab the session cart and assign it to the user
+        guess_cart, _ = Cart.objects.get_or_new(self.request)
+        user = form.get_user()
+        # set user backend to the default to avoid multiple
+        # authentication backends conflict
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        login(self.request,user)
+        user_cart, _ = Cart.objects.get_or_new(self.request)
+        for item in guess_cart.items.all():
+            item.cart = user_cart
+            item.save()
+        
+        guess_cart.delete()
+        return super().form_valid(form)
 
-            user = form.get_user()
-            # set user backend to the default to avoid multiple authentication backends conflict
-            user.backend = 'django.contrib.auth.backends.ModelBackend'
-            login(request,user)
-            user_cart, _ = Cart.objects.get_or_new(request)
-            for item in guess_cart.items.all():
-                item.cart = user_cart
-                item.save()
+class UploadPpView(UpdateView):
+    model = User
+    form_class = PpUploadForm
+    template_name = 'accounts/upload_profile_picture.html'
 
-            guess_cart.delete()
+    def get_success_url(self):
+        return reverse('home')
 
-            return redirect(reverse('home'))
-
-        else:
-            message = "Login failed"
-            
-    context = {
-        'form' : form,
-        'message' : message
-    }
-    return render(request,'accounts/login.html',context = context)
+    def get_object(self):
+        return self.request.user
 
 
 def logout_view(request):
-
     if request.method == 'POST':
         logout(request)
         return redirect(reverse('accounts:login'))
-
-    return render(request,'accounts/logout.html',context={})
+    return render(request,'accounts/logout.html')
 
 
 def signup_view(request):
@@ -60,7 +58,6 @@ def signup_view(request):
 
     if request.method == 'POST':
         form = SignUpForm(request.POST)
-
         if form.is_valid():
             user=form.save()
             # set user backend to the default to avoid multiple authentication backends conflict
@@ -69,19 +66,6 @@ def signup_view(request):
             return redirect(reverse('accounts:upload-pp'))
 
     return render(request,'accounts/signup.html',context={'form':form})
-
-
-def upload_pp_view(request):
-    form = PpUploadForm(instance=request.user)
-    if request.method == 'POST':
-        form = PpUploadForm(request.POST,request.FILES,instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse('home'))
-    context = {
-        'form' : form
-    }
-    return render(request,'accounts/upload_profile_picture.html',context=context)
 
 def edit_profile_view(request):
     user = request.user

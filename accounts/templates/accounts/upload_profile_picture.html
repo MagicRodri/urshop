@@ -1,12 +1,33 @@
 {% extends '_base.html' %}
 
 {% block content %}
-
-    {% if request.user.is_authenticated %}
-        <form action="" method="post" enctype='multipart/form-data'>
-            {% csrf_token %}
-            {{form.as_p}}
-            <button type="submit">Upload</button>
+<div class="login-page mt-100">
+    <div class="container">
+        {% if request.user.is_authenticated %}
+        <form action="" method='post' class="login-form common-form mx-auto" enctype='multipart/form-data'>
+          {% csrf_token %}
+            <div class="section-header mb-3">
+                <h2 class="section-heading text-center">Logout</h2>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <fieldset>
+                        <p class="text_16 d-block">Add a profile photo?</p>
+                        {{ form.picture.errors }}
+                        {% if form.instance.picture  %}
+                        <div class="mb-3">
+                            <img src={{form.instance.picture.url}} class="rounded" alt="img">
+                        </div>
+                        {% endif %}
+                        {{ form.picture }}
+                    </fieldset>
+                </div>
+                <div class="col-12 mt-3">
+                    <button type="submit" class="btn-primary d-block mt-4 btn-signin">UPLOAD</button>
+                </div>
+            </div>
         </form>
-    {% endif %}
+        {% endif %}
+    </div>
+ </div>
 {% endblock content %}

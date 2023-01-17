@@ -6,35 +6,41 @@
 {% endblock css %}
 
 {% block content %}
-    {% if not request.user.is_authenticated %}
-        <h1>Login</h1>
-        <form action="" method="post">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-
-            <div class="form__field username">
-                {{ form.username.errors }}
-                
-                {{ form.username }}
-                <span></span>
-                <label for="{{ form.username.id_for_label }}">Username</label>
-            </div>
-
-            <div class="form__field password">
-                {{ form.password.errors }}
-
-                {{ form.password }}
-                <span></span>
-                <label for="{{ form.password.id_for_label }}">Password</label>
-            </div>
-            <button type="submit">Login</button>
-        </form>
-        <a href="#" class="pass">Forgot password?</a>
-        <p class="signup_link">Don't have an account? <a href={% url 'accounts:signup' %}>Sign up<a/></p>
-    {% else %}
-        <p>You are already logged in. Do you wanna <a href={% url 'accounts:logout' %}>logout</a>?</p>
-    {% endif %}
-    
+    <div class="login-page mt-100">
+        <div class="container">
+            {% if not request.user.is_authenticated %}
+            <form action="" method="post" class="login-form common-form mx-auto">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="section-header mb-3">
+                    <h2 class="section-heading text-center">Login</h2>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <fieldset>
+                            <label for="{{ form.username.id_for_label }}">Username</label>
+                            {{ form.username.errors }}
+                            {{ form.username }}
+                        </fieldset>
+                    </div>
+                    <div class="col-12">
+                        <fieldset>
+                            <label for="{{ form.password.id_for_label }}">Password</label>
+                            {{ form.password }}
+                        </fieldset>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <a href="#" class="text_14 d-block">Forgot your password?</a>
+                        <button type="submit" class="btn-primary d-block mt-4 btn-signin">LOGIN</button>
+                        <a href={% url 'accounts:signup' %} class="btn-secondary mt-2 btn-signin">CREATE AN ACCOUNT</a>
+                    </div>
+                </div>
+            </form>
+            {% else %}
+                <p class="text_14 text-center">You are already logged in. Do you wanna <a href={% url 'accounts:logout' %}>logout</a>?</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock content %}
 
 {% block js %}

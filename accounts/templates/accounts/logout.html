@@ -1,10 +1,21 @@
 {% extends '_base.html' %}
 
 {% block content %}
-     <form action='' method='post'>
-        {% csrf_token %}
-        <p>Are you sure you wanna logout ?</p>
-        <button type='submit'>Yes, logout</button>
-     </form>
+<div class="login-page mt-100">
+   <div class="container">
+       <form action="" method='post' class="login-form common-form mx-auto">
+         {% csrf_token %}
+           <div class="section-header mb-3">
+               <h2 class="section-heading text-center">Logout</h2>
+           </div>
+           <div class="row">
+               <div class="col-12 mt-3">
+                   <p class="text_16 text-center">Are you sure you wanna logout?</p>
+                   <button type="submit" class="btn-primary d-block mt-4 btn-signin">LOGOUT</button>
+               </div>
+           </div>
+       </form>
+   </div>
+</div>
   
 {% endblock content %}

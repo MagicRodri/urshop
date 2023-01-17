@@ -6,15 +6,44 @@
 {% endblock css %}
 
 {% block content %}
-
-    {% if not request.user.is_authenticated %}
-        <form action="" method="post">
+<div class="login-page mt-100">
+    <div class="container">
+        {% if not request.user.is_authenticated %}
+        <form action="" method="post" class="login-form common-form mx-auto">
             {% csrf_token %}
-            {{form.as_p}}
-            <button type="submit">Register</button>
+            {{ form.non_field_errors }}
+            <div class="section-header mb-3">
+                <h2 class="section-heading text-center">Sign up</h2>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <fieldset>
+                        <label for="{{ form.username.id_for_label }}">Username</label>
+                        {{ form.username.errors }}
+                        {{ form.username }}
+                    </fieldset>
+                </div>
+                <div class="col-12">
+                    <fieldset>
+                        <label for="{{ form.password1.id_for_label }}">Password</label>
+                        {{ form.password1 }}
+                    </fieldset>
+                </div>
+                <div class="col-12">
+                    <fieldset>
+                        <label for="{{ form.password2.id_for_label }}">Confirm password</label>
+                        {{ form.password2 }}
+                    </fieldset>
+                </div>
+                <div class="col-12 mt-3">
+                    <button type="submit" class="btn-primary d-block mt-4 btn-signin">SIGN UP</button>
+                    <a href={% url 'accounts:login' %} class="btn-secondary mt-2 btn-signin">LOGIN PAGE</a>
+                </div>
+            </div>
         </form>
-        <p class="signup_link">Already have an account? <a href={% url 'accounts:login' %}>Login<a/></p>
-    {% else %}
-        <p>You are already signed in. Do you wanna <a href={% url 'accounts:logout' %}>logout</a>?</p>
-    {% endif %}
+        {% else %}
+            <p class="text_14 text-center">You are already logged in. Do you wanna <a href={% url 'accounts:logout' %}>logout</a>?</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock content %}
