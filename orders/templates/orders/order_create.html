@@ -4,114 +4,174 @@
 
 
 {% block content %}
-  {% if request.user.is_authenticated %}
-  <section >
-      <div class="container py-5 h-100">
-          <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-12">
-              <div class="card card-registration card-registration-2" style="border-radius: 15px;">
-                <div class="card-body p-0">
-                  <div class="row g-0">
-                    <div class="col-lg-8">
-                      <div class="p-5">
-                        <div class="d-flex justify-content-between align-items-center mb-5">
-                          <form id='address-form' action="" method="post" class="md-12" >
-                              {% csrf_token %}
-                              {{ address_form|crispy }}
-                          </form>
-                        </div>
-    
-                        <hr class="my-4">
-                        {% for item in items %}
-                            <div class="row mb-4 d-flex justify-content-between align-items-center">
-                                <div class="col-md-2 col-lg-2 col-xl-2">
-                                <img
-                                    src={{item.product.images.first.image.url}}
-                                    class="img-fluid rounded-3" alt="Cotton T-shirt">
-                                </div>
-                                <div class="col-md-3 col-lg-3 col-xl-3">
-                                <h6 class="text-muted">Shirt</h6>
-                                <h6 class="text-black mb-0">{{item.name}}</h6>
-                                </div>
-                                <div class="col-md-3 col-lg-3 col-xl-3 d-flex">
-                                <button class="btn btn-link px-2"
-                                    onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-            
-                                <input id="form1" min="0" name="quantity" value={{item.quantity}} type="number"
-                                    class="form-control form-control-sm" />
-            
-                                <button class="btn btn-link px-2"
-                                    onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                                </div>
-                                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                <h6 class="mb-0">${{item.total}}</h6>
-                                </div>
-                                <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                <a href="#!" class="text-muted"><i class="fas fa-times"></i></a>
-                                </div>
-                            </div>
-            
-                            <hr class="my-4"> 
-                        {% endfor %}
-                        <div class="pt-5">
-                          <h6 class="mb-0"><a href="#!" class="text-body"><i
-                                class="fas fa-long-arrow-alt-left me-2"></i>Back to shop</a></h6>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-4 bg-grey">
-                      <div class="p-5">
-                        <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
-                        <hr class="my-4">
-      
-                        <div class="d-flex justify-content-between mb-4">
-                          <h5 class="text-uppercase">3 items</h5>
-                          <h5>$ {{cart.total}}</h5>
-                        </div>
-      
-                        <h5 class="text-uppercase mb-3">Shipping</h5>
-      
-                        <div class="mb-4 pb-2">
-                          <select class="select">
-                            <option value="1">Standard-Delivery- €5.00</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                            <option value="4">Four</option>
-                          </select>
-                        </div>
-      
-                        <h5 class="text-uppercase mb-3">Give code</h5>
-      
-                        <div class="mb-5">
-                          <div class="form-outline">
-                            <input type="text" id="form3Examplea2" class="form-control form-control-lg" />
-                            <label class="form-label" for="form3Examplea2">Enter your code</label>
-                          </div>
-                        </div>
-      
-                        <hr class="my-4">
-      
-                        <div class="d-flex justify-content-between mb-5">
-                          <h5 class="text-uppercase">Total price</h5>
-                          <h5>$ {{cart.total}}</h5>
-                        </div>
-                        <button id="checkout-button" class="btn btn-dark btn-block btn-lg"
-                        data-mdb-ripple-color="dark" type="submit">Proceed to payment</button>
-      
-                      </div>
-                    </div>
+<div class="checkout-page mt-100">
+  <div class="container">
+      <div class="checkout-page-wrapper">
+          <div class="row">
+              <div class="col-xl-9 col-lg-8 col-md-12 col-12">
+                  <div class="section-header mb-3">
+                      <h2 class="section-heading">Check out</h2>
                   </div>
-                </div>
+
+                  <div class="checkout-progress overflow-hidden">
+                      <ol class="checkout-bar px-0">
+                          <li class="progress-step step-done"><a href="cart.html">Cart</a></li>
+                          <li class="progress-step step-active"><a href="checkout.html">Your Details</a></li>
+                          <li class="progress-step step-todo"><a href="checkout.html">Shipping</a></li>
+                          <li class="progress-step step-todo"><a href="checkout.html">Payment</a></li>
+                          <li class="progress-step step-todo"><a href="checkout.html">Review</a></li>
+                      </ol>
+                  </div>
+
+                  <div class="checkout-user-area overflow-hidden d-flex align-items-center">
+                      <div class="checkout-user-img me-4">
+                          <img src="assets/img/checkout/user.jpg" alt="img">
+                      </div>
+                      <div class="checkout-user-details d-flex align-items-center justify-content-between w-100">
+                          <div class="checkout-user-info">
+                              <h2 class="checkout-user-name">Susan Gardner</h2>
+                              <p class="checkout-user-address mb-0">2752 avenue Royale, Quebec, G1R 2B2, Canada</p>
+                          </div>
+                          
+                          <a href="checkout.html#" class="edit-user btn-secondary">EDIT PROFILE</a>
+                      </div>
+                  </div>
+
+                  <div class="shipping-address-area">
+                      <h2 class="shipping-address-heading pb-1">Shipping address</h2>
+                      <div class="shipping-address-form-wrapper">
+                          <form action="" id="address-form" class="shipping-address-form common-form">
+                            {% csrf_token %}
+                              <div class="row">
+                                  <div class="col-lg-6 col-md-12 col-12">
+                                      <fieldset>
+                                          <label class="label">{{address_form.first_name.label}}</label>
+                                          {{address_form.first_name}}
+                                      </fieldset>
+                                  </div>
+                                  <div class="col-lg-6 col-md-12 col-12">
+                                      <fieldset>
+                                          <label class="label">{{address_form.last_name.label}}</label>
+                                          {{address_form.last_name}}
+                                      </fieldset>
+                                  </div>
+                                  <div class="col-lg-6 col-md-12 col-12">
+                                      <fieldset>
+                                          <label class="label">{{address_form.email.label}}</label>
+                                          {{address_form.email}}
+                                      </fieldset>
+                                  </div>
+                                  <div class="col-lg-6 col-md-12 col-12">
+                                    <fieldset>
+                                      <label class="label">{{address_form.country.label}}</label>
+                                      {{address_form.country}}
+                                    </fieldset>
+                                  </div>
+                                  <div class="col-lg-6 col-md-12 col-12">
+                                    <fieldset>
+                                      <label class="label">{{address_form.state.label}}</label>
+                                      {{address_form.state}}
+                                    </fieldset>
+                                  </div>
+                                  <div class="col-lg-6 col-md-12 col-12">
+                                      <fieldset>
+                                          <label class="label">{{address_form.city.label}}</label>
+                                          {{address_form.city}}
+                                      </fieldset>
+                                  </div>
+                                  <div class="col-lg-6 col-md-12 col-12">
+                                      <fieldset>
+                                          <label class="label">{{address_form.address_type.label}}</label>                                                        
+                                          {{address_form.address_type}}
+                                      </fieldset>
+                                  </div>
+                                  <div class="col-lg-6 col-md-12 col-12">
+                                      <fieldset>
+                                          <label class="label">{{address_form.zip.label}}</label>
+                                          {{address_form.zip}}
+                                      </fieldset>
+                                  </div>
+                                  <div class="col-lg-6 col-md-12 col-12">
+                                      <fieldset>
+                                          <label class="label">{{address_form.address_line_1.label}}</label>
+                                          {{address_form.address_line_1}}
+                                      </fieldset>
+                                  </div>
+                                  <div class="col-lg-6 col-md-12 col-12">
+                                      <fieldset>
+                                          <label class="label">{{address_form.address_line_2.label}}</label>
+                                          {{address_form.address_line_2}}
+                                      </fieldset>
+                                  </div>
+                              </div>
+
+                          </form>
+                      </div>
+                  </div>
+
+                  <div class="shipping-address-area billing-area">
+                      <h2 class="shipping-address-heading pb-1">Billing address</h2>
+                      <div class="form-checkbox d-flex align-items-center mt-4">
+                          <input class="form-check-input mt-0" type="checkbox">
+                          <label class="form-check-label ms-2">
+                              Same as shipping address
+                          </label>
+                      </div>
+                  </div>
+                  <div class="shipping-address-area billing-area">
+                      <div class="minicart-btn-area d-flex align-items-center justify-content-between flex-wrap">
+                          <a href={% url 'carts:detail' %} class="checkout-page-btn minicart-btn btn-secondary">BACK TO CART</a>
+                          <button id="checkout-button" class="checkout-page-btn minicart-btn btn-primary">PROCEED TO PAYMENT</button>
+                      </div>
+                  </div>
               </div>
-            </div>
+              <div class="col-xl-3 col-lg-4 col-md-12 col-12">
+                  <div class="cart-total-area checkout-summary-area">
+                      <h3 class="d-none d-lg-block mb-0 text-center heading_24 mb-4">Order summary</h4>
+                        {% for item in items %}
+                          <div class="minicart-item d-flex">
+                              <div class="mini-img-wrapper">
+                                  <img class="mini-img" src={{item.preview}} alt={{item.product}}>
+                              </div>
+                              <div class="product-info">
+                                  <h2 class="product-title"><a href="checkout.html#">{{item.product}}</a></h2>
+                                  <p class="product-vendor">${{item.price}} x {{item.quantity}}</p>
+                              </div>
+                          </div>
+                        {% endfor %}
+                      <div class="cart-total-box mt-4 bg-transparent p-0">
+                          <div class="subtotal-item subtotal-box">
+                              <h4 class="subtotal-title">Subtotals:</h4>
+                              <p class="subtotal-value">${{cart.total}}</p>
+                          </div>
+                          <div class="subtotal-item shipping-box">
+                              <h4 class="subtotal-title">Shipping:</h4>
+                              <p class="subtotal-value">$0.00</p>
+                          </div>
+                          <div class="subtotal-item discount-box">
+                              <h4 class="subtotal-title">Discount:</h4>
+                              <p class="subtotal-value">$0.00</p>
+                          </div>
+                          <hr />
+                          <div class="subtotal-item discount-box">
+                              <h4 class="subtotal-title">Total:</h4>
+                              <p class="subtotal-value">${{cart.total}}</p>
+                          </div>
+
+
+                          <div class="mt-4 checkout-promo-code">
+                              <input class="input-promo-code" type="text" placeholder="Promo code" />
+                              <a href="#" class="btn-apply-code position-relative btn-secondary text-uppercase mt-3">
+                                  Apply Promo Code
+                              </a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
           </div>
-        </div>
-      </section>
-  {% endif %}
+      </div>
+  </div>
+</div>
 {% endblock content %}
 
 {% block js %}

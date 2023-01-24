@@ -39,14 +39,14 @@
                 <div class="minicart-calc-area">
                     <div class="minicart-calc d-flex align-items-center justify-content-between">
                         <span class="cart-subtotal mb-0">Subtotal</span>
-                        <span class="cart-subprice">$1548.00</span>
+                        <span class="cart-subprice">${{cart.total}}</span>
                     </div>
                     <p class="cart-taxes text-center my-4">Taxes and shipping will be calculated at checkout.
                     </p>
                 </div>
                 <div class="minicart-btn-area d-flex align-items-center justify-content-between">
                     <a href={% url 'carts:detail' %} class="minicart-btn btn-secondary">View Cart</a>
-                    <a href="checkout.html" class="minicart-btn btn-primary">Checkout</a>
+                    <a href={% url 'orders:create' %} class="minicart-btn btn-primary">Checkout</a>
                 </div>
             </div>
         </div>

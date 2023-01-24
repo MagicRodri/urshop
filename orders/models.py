@@ -26,8 +26,11 @@ class Address(BaseModel):
                              on_delete=models.CASCADE,
                              blank=True,
                              null=True)
+    first_name = models.CharField(max_length=128, blank=True)
+    last_name = models.CharField(max_length=128, blank=True)
+    email = models.EmailField(blank=True)
     address_type = models.CharField(max_length=16,
-                                    default=BILLING,
+                                    default=SHIPPING,
                                     choices=ADDRESS_TYPES)
     address_line_1 = models.CharField(max_length=128)
     address_line_2 = models.CharField(max_length=128, blank=True)
